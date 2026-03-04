@@ -66,19 +66,22 @@ dependencies {
 	// sentry
 	implementation("io.sentry:sentry:8.31.0")
 	//gcs
-//	implementation("com.google.cloud:spring-cloud-gcp-starter-storage")
+	implementation("com.google.cloud:spring-cloud-gcp-starter-storage")
 	// reactive
 	implementation("io.projectreactor.kotlin:reactor-kotlin-extensions")
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
 //	implementation("org.thymeleaf.extras:thymeleaf-extras-spring-security6")
 	implementation("tools.jackson.module:jackson-module-kotlin")
-
+    //websocket
+    implementation("org.springframework.boot:spring-boot-starter-websocket")
 	runtimeOnly("io.jsonwebtoken:jjwt-impl:0.12.6")
 	runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.12.6")
 	runtimeOnly("org.postgresql:postgresql")
 	runtimeOnly("org.flywaydb:flyway-database-postgresql:11.19.0")
 	runtimeOnly("com.ongres.scram:scram-common:3.2")
+   // developmentOnly("org.springframework.boot:spring-boot-docker-compose")
+    testImplementation("org.springframework.boot:spring-boot-starter-flyway-test")
 	testImplementation("org.springframework.boot:spring-boot-starter-data-jpa-test")
 	testImplementation("org.springframework.boot:spring-boot-starter-data-r2dbc-test")
 	testImplementation("org.springframework.boot:spring-boot-starter-security-test")
@@ -89,12 +92,12 @@ dependencies {
 	testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
-//dependencyManagement {
-//	imports {
-//		mavenBom("com.google.cloud:spring-cloud-gcp-dependencies:${property("springCloudGcpVersion")}")
-//		mavenBom("org.springframework.cloud:spring-cloud-dependencies:${property("springCloudVersion")}")
-//	}
-//}
+dependencyManagement {
+	imports {
+		mavenBom("com.google.cloud:spring-cloud-gcp-dependencies:${property("springCloudGcpVersion")}")
+		mavenBom("org.springframework.cloud:spring-cloud-dependencies:${property("springCloudVersion")}")
+	}
+}
 kotlin {
 	compilerOptions {
 		freeCompilerArgs.addAll("-Xjsr305=strict", "-Xannotation-default-target=param-property")
