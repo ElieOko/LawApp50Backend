@@ -1,4 +1,4 @@
-package server.web.casa.security.monitoring
+package emy.backend.lawapp50.security.monitoring
 
 import io.sentry.Sentry
 import io.sentry.metrics.*
