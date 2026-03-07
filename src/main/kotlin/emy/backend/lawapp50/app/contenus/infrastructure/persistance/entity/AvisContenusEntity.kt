@@ -1,0 +1,21 @@
+package emy.backend.lawapp50.app.contenus.infrastructure.persistance.entity
+
+import org.springframework.data.annotation.*
+import org.springframework.data.relational.core.mapping.*
+
+@Table(name = "avis_contenus")
+class AvisContenusEntity(
+    @Id
+    @Column("id")
+    val id: Long? = null,
+    @Column("contenu_id")
+    var contenuId: Long,
+    @Column("user_id")
+    var userId: Long,
+    @Column("description")
+    var description : String?,
+    @Column("cote")
+    val cote : Long = 0,
+    @Column("is_active")
+    var isActive: Boolean = false,
+)

@@ -1,0 +1,19 @@
+package emy.backend.lawapp50.app.contenus.infrastructure.persistance.entity
+
+import org.springframework.data.annotation.*
+import org.springframework.data.relational.core.mapping.*
+
+@Table(name = "commentaire_response_contenus")
+class CommentaireResponseContenuEntity(
+    @Id
+    @Column("id")
+    val id: Long? = null,
+    @Column("commentaire_contenu_id")
+    var commentaireContenuId : Long,
+    @Column("user_id")
+    var userId: Long,
+    @Column("description")
+    var description : String,
+    @Column("is_active")
+    var isActive: Boolean = false,
+)
