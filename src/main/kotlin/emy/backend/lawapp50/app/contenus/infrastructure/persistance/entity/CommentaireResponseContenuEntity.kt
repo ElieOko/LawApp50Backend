@@ -2,6 +2,7 @@ package emy.backend.lawapp50.app.contenus.infrastructure.persistance.entity
 
 import org.springframework.data.annotation.*
 import org.springframework.data.relational.core.mapping.*
+import java.time.LocalDateTime
 
 @Table(name = "commentaire_response_contenus")
 class CommentaireResponseContenuEntity(
@@ -16,4 +17,6 @@ class CommentaireResponseContenuEntity(
     var description : String,
     @Column("is_active")
     var isActive: Boolean = false,
+    @Column("created_at")
+    val createdAt: LocalDateTime = LocalDateTime.now(),
 )

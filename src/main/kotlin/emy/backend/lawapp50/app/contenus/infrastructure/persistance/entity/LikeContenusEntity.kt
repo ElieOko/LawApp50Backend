@@ -11,7 +11,7 @@ class LikeContenusEntity(
     val id: Long? = null,
     @Column("contenu_id")
     var contenuId: Long,
-    @Column("like")
+    @Column("is_like")
     var like: Boolean = true,
     @Column("user_id")
     var userId: Long,
