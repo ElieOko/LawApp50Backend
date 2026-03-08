@@ -8,7 +8,14 @@ object ContenuScope{
     const val PRIVATE = "${GlobalRoute.PRIVATE}/${FeatureActor.CONTENU}"
 }
 
+object AvisContenuScope{
+    const val PUBLIC = "${GlobalRoute.PUBLIC}/${FeatureActor.AVIS}"
+    const val PROTECTED = "${GlobalRoute.PROTECT}/${FeatureActor.AVIS}"
+    const val PRIVATE = "${GlobalRoute.PRIVATE}/${FeatureActor.AVIS}"
+}
+
 
 object FeatureActor{
     const val CONTENU = "contenu"
+    const val AVIS = "avis"
 }
