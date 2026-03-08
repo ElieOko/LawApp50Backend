@@ -3,48 +3,53 @@ package emy.backend.lawapp50.route.contenu
 import emy.backend.lawapp50.route.GlobalRoute
 
 object ContenuScope{
-    const val PUBLIC = "${GlobalRoute.PUBLIC}/${FeatureActor.CONTENU}"
-    const val PROTECTED = "${GlobalRoute.PROTECT}/${FeatureActor.CONTENU}"
-    const val PRIVATE = "${GlobalRoute.PRIVATE}/${FeatureActor.CONTENU}"
+    const val PUBLIC = "${GlobalRoute.PUBLIC}/${FeaturContenu.CONTENU}"
+    const val PROTECTED = "${GlobalRoute.PROTECT}/${FeaturContenu.CONTENU}"
+    const val PRIVATE = "${GlobalRoute.PRIVATE}/${FeaturContenu.CONTENU}"
 }
 
 object AvisContenuScope{
-    const val PUBLIC = "${GlobalRoute.PUBLIC}/${FeatureActor.AVIS}"
-    const val PROTECTED = "${GlobalRoute.PROTECT}/${FeatureActor.AVIS}"
-    const val PRIVATE = "${GlobalRoute.PRIVATE}/${FeatureActor.AVIS}"
+    const val PUBLIC = "${GlobalRoute.PUBLIC}/${FeaturContenu.AVIS}"
+    const val PROTECTED = "${GlobalRoute.PROTECT}/${FeaturContenu.AVIS}"
+    const val PRIVATE = "${GlobalRoute.PRIVATE}/${FeaturContenu.AVIS}"
 }
 
 object CategorieContenuScope{
-    const val PUBLIC = "${GlobalRoute.PUBLIC}/${FeatureActor.CATEGORICONTENU}"
-    const val PROTECTED = "${GlobalRoute.PROTECT}/${FeatureActor.CATEGORICONTENU}"
-    const val PRIVATE = "${GlobalRoute.PRIVATE}/${FeatureActor.CATEGORICONTENU}"
+    const val PUBLIC = "${GlobalRoute.PUBLIC}/${FeaturContenu.CATEGORICONTENU}"
+    const val PROTECTED = "${GlobalRoute.PROTECT}/${FeaturContenu.CATEGORICONTENU}"
+    const val PRIVATE = "${GlobalRoute.PRIVATE}/${FeaturContenu.CATEGORICONTENU}"
 }
 
 
 object CategorieScope{
-    const val PUBLIC = "${GlobalRoute.PUBLIC}/${FeatureActor.CATEGORIE}"
-    const val PROTECTED = "${GlobalRoute.PROTECT}/${FeatureActor.CATEGORIE}"
-    const val PRIVATE = "${GlobalRoute.PRIVATE}/${FeatureActor.CATEGORIE}"
+    const val PUBLIC = "${GlobalRoute.PUBLIC}/${FeaturContenu.CATEGORIE}"
+    const val PROTECTED = "${GlobalRoute.PROTECT}/${FeaturContenu.CATEGORIE}"
+    const val PRIVATE = "${GlobalRoute.PRIVATE}/${FeaturContenu.CATEGORIE}"
 }
 object CommentaireScope{
-    const val PUBLIC = "${GlobalRoute.PUBLIC}/${FeatureActor.COMMENTAIRE}"
-    const val PROTECTED = "${GlobalRoute.PROTECT}/${FeatureActor.COMMENTAIRE}"
-    const val PRIVATE = "${GlobalRoute.PRIVATE}/${FeatureActor.COMMENTAIRE}"
+    const val PUBLIC = "${GlobalRoute.PUBLIC}/${FeaturContenu.COMMENTAIRE}"
+    const val PROTECTED = "${GlobalRoute.PROTECT}/${FeaturContenu.COMMENTAIRE}"
+    const val PRIVATE = "${GlobalRoute.PRIVATE}/${FeaturContenu.COMMENTAIRE}"
 }
 object ResponseScope{
-    const val PUBLIC = "${GlobalRoute.PUBLIC}/${FeatureActor.RESPONSECOM}"
-    const val PROTECTED = "${GlobalRoute.PROTECT}/${FeatureActor.RESPONSECOM}"
-    const val PRIVATE = "${GlobalRoute.PRIVATE}/${FeatureActor.RESPONSECOM}"
+    const val PUBLIC = "${GlobalRoute.PUBLIC}/${FeaturContenu.RESPONSECOM}"
+    const val PROTECTED = "${GlobalRoute.PROTECT}/${FeaturContenu.RESPONSECOM}"
+    const val PRIVATE = "${GlobalRoute.PRIVATE}/${FeaturContenu.RESPONSECOM}"
 }
 
 object FavoriScope{
-    const val PUBLIC = "${GlobalRoute.PUBLIC}/${FeatureActor.FAVORI}"
-    const val PROTECTED = "${GlobalRoute.PROTECT}/${FeatureActor.FAVORI}"
-    const val PRIVATE = "${GlobalRoute.PRIVATE}/${FeatureActor.FAVORI}"
+    const val PUBLIC = "${GlobalRoute.PUBLIC}/${FeaturContenu.FAVORI}"
+    const val PROTECTED = "${GlobalRoute.PROTECT}/${FeaturContenu.FAVORI}"
+    const val PRIVATE = "${GlobalRoute.PRIVATE}/${FeaturContenu.FAVORI}"
+}
+object LikeScope{
+    const val PUBLIC = "${GlobalRoute.PUBLIC}/${FeaturContenu.LIKE}"
+    const val PROTECTED = "${GlobalRoute.PROTECT}/${FeaturContenu.LIKE}"
+    const val PRIVATE = "${GlobalRoute.PRIVATE}/${FeaturContenu.LIKE}"
 }
 
 
-object FeatureActor{
+object FeaturContenu{
     const val CONTENU = "contenu"
     const val AVIS = "avis"
     const val CATEGORICONTENU ="categoriecontenu"
@@ -52,4 +57,5 @@ object FeatureActor{
     const val COMMENTAIRE = "commentaire"
     const val RESPONSECOM = "response"
     const val FAVORI = "favori"
+    const val LIKE = "like"
 }
