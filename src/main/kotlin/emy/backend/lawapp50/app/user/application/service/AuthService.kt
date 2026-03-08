@@ -97,18 +97,20 @@ class AuthService(
             log.info("Logging into user ${user.userId}")
             val newAccessToken = jwtService.generateAccessToken(user.userId!!.toHexString())
             val newRefreshToken = jwtService.generateRefreshToken(user.userId!!.toHexString())
-//            val accounts = if (serviceMultiAccount.count() != 0L) serviceMultiAccount.getAll().filter { it.userId == user.userId }.toList() else emptyList()
-//            val accountMultiple: List<AccountDTO> = if (accounts.isNotEmpty()) accounts.map {
-//                val data = accountService.findByIdAccount(it.accountId)
-//                AccountDTO(id = data.id, name = data.name, typeAccount = typeAccountService.findByIdTypeAccount(data.typeAccountId))
-//            }.toList() else emptyList()
-            val profile = null
-//                when(accountMultiple[0].id?.toInt()){
-//                2 -> mapOf("type" to  2, "student" to student.findByIdUser(user.userId!!))
-//                3 -> mapOf("type" to  3, "teacher" to teacher.findByIdUser(user.userId!!))
-//                else -> null
-//            }
-            storeRefreshToken(user.userId!!, newRefreshToken)
+            val accounts = if (serviceMultiAccount.count() != 0L) serviceMultiAccount.getAll().filter { it.userId == user.userId }.toList() else emptyList()
+            val accountMultiple: List<AccountDTO> = if (accounts.isNotEmpty()) accounts.map {
+                val data = accountService.findByIdAccount(it.accountId)
+                AccountDTO(id = data.id, name = data.name, typeAccount = typeAccountService.findByIdTypeAccount(data.typeAccountId))
+            }.toList() else emptyList()
+            var profile : Any? = null
+            if (accountMultiple.isNotEmpty()){
+                profile = when(accountMultiple[0].id?.toInt()){
+                    2 -> mapOf("type" to  2, "students" to student.findByIdUser(user.userId))
+                    3 -> mapOf("type" to  3, "teacher" to teacher.findByIdUser(user.userId))
+                    else -> null
+                }
+            }
+            storeRefreshToken(user.userId,newRefreshToken)
             val result = Pair(
                 TokenPair(accessToken = newAccessToken, refreshToken = newRefreshToken),
                 UserFullDTO(user.toDomain(),profile)
