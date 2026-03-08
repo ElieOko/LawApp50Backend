@@ -5,7 +5,7 @@ import emy.backend.lawapp50.app.user.infrastructure.persistance.entity.AccountDT
 data class UserFullDTO(
     val user: UserDto,
 //    val accountMultiple: List<AccountDTO>,
-    val profile: Map<String, Any?>?,
+    val profile: Any?,
 //    val accounts: List<AccountDTO>,
 //    val profile: Person?
 )
