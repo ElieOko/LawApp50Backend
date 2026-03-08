@@ -3,6 +3,11 @@ package emy.backend.lawapp50.app.actor.application.service
 import emy.backend.lawapp50.app.actor.domain.model.*
 import emy.backend.lawapp50.app.actor.infrastructure.persistance.entity.toDomain
 import emy.backend.lawapp50.app.actor.infrastructure.persistance.repository.StudentRepository
+import emy.backend.lawapp50.app.school_ecosystem.application.service.PromotionService
+import emy.backend.lawapp50.app.school_ecosystem.domain.model.Etablissement
+import emy.backend.lawapp50.app.school_ecosystem.infrastructure.persistance.entity.toDomain
+import emy.backend.lawapp50.app.school_ecosystem.infrastructure.persistance.repository.EtablissementRepository
+import emy.backend.lawapp50.app.school_ecosystem.infrastructure.persistance.repository.PromotionRepository
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.map
 import org.springframework.http.HttpStatusCode
@@ -11,7 +16,9 @@ import org.springframework.web.server.ResponseStatusException
 
 @Service
 class StudentService(
-    private val repository: StudentRepository
+    private val repository: StudentRepository,
+    private val promotion : PromotionRepository,
+    private val etablissement: EtablissementRepository
 ) {
     suspend fun finAllStudent() = coroutineScope {
         repository.findAll().map { it.toDomain() }
@@ -22,8 +29,11 @@ class StudentService(
     suspend fun findByIdStudent(id : Long): Student? = coroutineScope  {
         repository.findById(id)?.toDomain() ?: throw ResponseStatusException(HttpStatusCode.valueOf(404), "ID $id not found.")
     }
-    suspend fun findByIdUser(userId : Long): Student?  = coroutineScope {
-        repository.findByUser(userId)?.toDomain()
+    suspend fun findByIdUser(userId : Long)  = coroutineScope {
+        val data = repository.findByUser(userId)?.toDomain()
+        val promo = promotion.findById(data?.promotionId!!)?.toDomain()
+        val ets = etablissement.findById(data.etablissementId!!)?.toDomain()
+        mapOf("student" to data, "promotion" to promo, "etablissement" to ets)
     }
     suspend fun update(id : Long,model: Student): Student {
         val data = repository.findById(id)
