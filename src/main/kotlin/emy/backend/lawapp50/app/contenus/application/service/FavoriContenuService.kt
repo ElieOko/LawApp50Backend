@@ -1,6 +1,21 @@
 package emy.backend.lawapp50.app.contenus.application.service
 
+import emy.backend.lawapp50.app.contenus.infrastructure.persistance.entity.FavorisContenusEntity
+import emy.backend.lawapp50.app.contenus.infrastructure.persistance.repository.FavoriContenuRepository
+import kotlinx.coroutines.flow.Flow
 import org.springframework.stereotype.Service
 
 @Service
-class FavoriContenuService {}
+class FavoriContenuService(private val r: FavoriContenuRepository) {
+    suspend fun create(c: FavorisContenusEntity): FavorisContenusEntity{
+        return r.save(c)
+    }
+
+    suspend fun findById(id:Long): FavorisContenusEntity?{
+        return r.findById(id)
+    }
+
+    suspend fun getAll():Flow<FavorisContenusEntity>{
+        return r.findAll()
+    }
+}
