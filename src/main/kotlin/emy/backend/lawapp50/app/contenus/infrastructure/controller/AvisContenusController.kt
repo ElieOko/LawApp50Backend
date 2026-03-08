@@ -47,8 +47,8 @@ class AvisContenusController(
                     startNanos = startNanos,
                     status = "200",
                     route = "${req.method} /${req.requestURI}",
-                    countName = "api.contenu.createcontenu.count",
-                    distributionName = "api.contenu.createcontenu.latency"
+                    countName = "api.avis.createcontenu.count",
+                    distributionName = "api.avis.createcontenu.latency"
                 )
             )
         }
@@ -56,7 +56,7 @@ class AvisContenusController(
 
     @Operation(summary = "recuperation des avis sur contenu")
     @GetMapping("/{version}/${AvisContenuScope.PROTECTED}",produces = [MediaType.APPLICATION_JSON_VALUE])
-    suspend fun getAllContenu(req: HttpServletRequest) = coroutineScope {
+    suspend fun getAllAvisContenu(req: HttpServletRequest) = coroutineScope {
         val startNanos = System.nanoTime()
         try {
             mapOf("accounts" to s.getAll())
@@ -66,8 +66,8 @@ class AvisContenusController(
                     startNanos = startNanos,
                     status = "200",
                     route = "${req.method} /${req.requestURI}",
-                    countName = "api.contenu.getallcontenu.count",
-                    distributionName = "api.contenu.getallcontenu.latency"
+                    countName = "api.avis.getallcontenu.count",
+                    distributionName = "api.avis.getallcontenu.latency"
                 )
             )
         }
@@ -85,8 +85,8 @@ class AvisContenusController(
                     startNanos = startNanos,
                     status = "200",
                     route = "${req.method} /${req.requestURI}",
-                    countName = "api.contenu.getallcontenu.count",
-                    distributionName = "api.contenu.getallcontenu.latency"
+                    countName = "api.avis.getallcontenu.count",
+                    distributionName = "api.avis.getallcontenu.latency"
                 )
             )
         }

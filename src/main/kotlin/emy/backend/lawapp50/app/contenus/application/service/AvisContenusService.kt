@@ -18,4 +18,5 @@ class AvisContenusService(private val r: AvisContenusRepository)
 
     suspend fun getAll():Flow<AvisContenusEntity>{
         return r.findAll()
-    }}
+    }
+}
