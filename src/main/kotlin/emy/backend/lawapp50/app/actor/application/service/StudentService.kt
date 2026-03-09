@@ -7,6 +7,7 @@ import emy.backend.lawapp50.app.school_ecosystem.application.service.PromotionSe
 import emy.backend.lawapp50.app.school_ecosystem.domain.model.Etablissement
 import emy.backend.lawapp50.app.school_ecosystem.infrastructure.persistance.entity.toDomain
 import emy.backend.lawapp50.app.school_ecosystem.infrastructure.persistance.repository.EtablissementRepository
+import emy.backend.lawapp50.app.school_ecosystem.infrastructure.persistance.repository.FaculteRepository
 import emy.backend.lawapp50.app.school_ecosystem.infrastructure.persistance.repository.PromotionRepository
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.map
@@ -18,6 +19,7 @@ import org.springframework.web.server.ResponseStatusException
 class StudentService(
     private val repository: StudentRepository,
     private val promotion : PromotionRepository,
+    private val faculte : FaculteRepository,
     private val etablissement: EtablissementRepository
 ) {
     suspend fun finAllStudent() = coroutineScope {

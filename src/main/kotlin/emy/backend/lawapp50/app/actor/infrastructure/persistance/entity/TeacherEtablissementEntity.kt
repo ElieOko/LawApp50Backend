@@ -7,7 +7,7 @@ import org.springframework.data.relational.core.mapping.*
 class TeacherEtablissementEntity (
     @Id
     @Column("id")
-    val id: Long?,
+    val id: Long? = null,
     @Column("teacher_id")
     val teacherId: Long,
     @Column("etablissement_id")
