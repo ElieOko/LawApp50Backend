@@ -11,6 +11,7 @@ import emy.backend.lawapp50.app.school_ecosystem.infrastructure.persistance.repo
 import emy.backend.lawapp50.app.school_ecosystem.infrastructure.persistance.repository.PromotionRepository
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.map
+import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatusCode
 import org.springframework.stereotype.Service
 import org.springframework.web.server.ResponseStatusException
@@ -43,5 +44,9 @@ class StudentService(
             return repository.save(model.toEntity()).toDomain()
         }
         throw ResponseStatusException(HttpStatusCode.valueOf(403), "Invalid credentials.")
+    }
+    suspend fun checkUser(userId: Long) = coroutineScope{
+        if (repository.findByUser(userId) != null) throw ResponseStatusException(HttpStatus.BAD_REQUEST,"Ce compte est déjà utilisé par un étudiant. Si vous pensez qu’il s’agit d’une erreur, veuillez contacter l’administration." )
+        false
     }
 }

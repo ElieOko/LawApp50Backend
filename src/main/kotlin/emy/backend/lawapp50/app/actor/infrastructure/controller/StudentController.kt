@@ -64,6 +64,7 @@ class StudentController(
             val promotion = promotionRepository.findById(data.promotionId!!)?.id
             data.etablissementId = etablissement
             data.promotionId = promotion
+            service.checkUser(data.userId!!)
             val student = service.create(data)
             val state = account.save(AccountUser(userId = data.userId!!, accountId = 2))
             ResponseEntity.status(201).body(mapOf(

@@ -59,6 +59,7 @@ class TeacherController(
         try {
             val data = data2.toDomain(userConnect?.first?.userId)
 //            if (data2.etablissement.isNotEmpty()) {
+            service.checkUser(data.userId!!)
             val teacher = service.create(data)
             val state = account.save(AccountUser(userId = data.userId!!, accountId = 3))
             data2.etablissement.forEach {
