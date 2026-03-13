@@ -37,9 +37,14 @@ class LikeContenusController (
                 like = true,
                 isActive = true
             )
-
-            val createLike = s.create(data)
-            mapOf("contenu" to createLike)
+            val existingFavorite = s.getFavoriteIfExist(rData.contenuId, user.userId!!)
+            val createLike = if (existingFavorite != null) {
+                existingFavorite.like = !existingFavorite.like
+                existingFavorite.isActive = !existingFavorite.isActive
+                s.create(existingFavorite)
+            } else s.create(data)
+            userS
+            mapOf("likes" to createLike)
         } finally {
             sentry.callToMetric(
                 MetricModel(
