@@ -24,7 +24,7 @@ class LikeContenusController (
     private val userS: UserService,
 ) {
     @Operation(summary = "Creation de like")
-    @PostMapping("/{version}/${LikeScope.PROTECTED}",produces = [MediaType.APPLICATION_JSON_VALUE])
+    @PostMapping("/{version}/${LikeScope.PRIVATE}",produces = [MediaType.APPLICATION_JSON_VALUE])
     suspend fun createLike(
         @Valid @RequestBody rData: FavorisContenuRequest, req: HttpServletRequest
     ) = coroutineScope {
@@ -76,7 +76,7 @@ class LikeContenusController (
         }
     }
 
-    @GetMapping("/{version}/${LikeScope.PROTECTED}/{id}",produces = [MediaType.APPLICATION_JSON_VALUE])
+    @GetMapping("/{version}/${LikeScope.PRIVATE}/{id}",produces = [MediaType.APPLICATION_JSON_VALUE])
     suspend fun getById(req: HttpServletRequest, @PathVariable id: Long) = coroutineScope {
         val startNanos = System.nanoTime()
         try {
