@@ -5,6 +5,8 @@ import emy.backend.lawapp50.app.contenus.infrastructure.persistance.entity.LikeC
 import emy.backend.lawapp50.app.contenus.infrastructure.persistance.repository.LikeContenusRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.toList
 import org.springframework.stereotype.Service
 
 @Service
@@ -20,8 +22,7 @@ class LikeContenusService(private val r: LikeContenusRepository) {
         val like: LikeContenusEntity? = r.findFavoriteExist(contenuId, user)?.firstOrNull()
         return like
     }
-
-    suspend fun getAll():Flow<LikeContenusEntity>{
-        return r.findAll()
+    suspend fun getAll(): List<LikeContenusEntity>{
+        return r.findAll().map{it}.toList()
     }
 }
