@@ -24,7 +24,7 @@ class AvisContenusController(
     private val sentry : SentryService
 ) {
     @Operation(summary = "Creation de avis sur contenu")
-    @PostMapping("/{version}/${AvisContenuScope.PROTECTED}",produces = [MediaType.APPLICATION_JSON_VALUE])
+    @PostMapping("/{version}/${AvisContenuScope.PRIVATE}",produces = [MediaType.APPLICATION_JSON_VALUE])
     suspend fun createAvisContenu(
         @Valid @RequestBody rData: AvisContenusRequest, req: HttpServletRequest
     ) = coroutineScope {
@@ -40,7 +40,7 @@ class AvisContenusController(
             )
 
             val createContenu = s.create(data)
-            mapOf("contenu" to createContenu)
+            mapOf("avis" to createContenu)
         } finally {
             sentry.callToMetric(
                 MetricModel(
@@ -59,26 +59,26 @@ class AvisContenusController(
     suspend fun getAllAvisContenu(req: HttpServletRequest) = coroutineScope {
         val startNanos = System.nanoTime()
         try {
-            mapOf("accounts" to s.getAll())
+            mapOf("avis" to s.getAll())
         } finally {
             sentry.callToMetric(
                 MetricModel(
                     startNanos = startNanos,
                     status = "200",
                     route = "${req.method} /${req.requestURI}",
-                    countName = "api.avis.getallcontenu.count",
-                    distributionName = "api.avis.getallcontenu.latency"
+                    countName = "api.avis.getallaviscontenu.count",
+                    distributionName = "api.avis.getallaviscontenu.latency"
                 )
             )
         }
     }
 
     @Operation(summary = "recuperer un avis sur contenu par id")
-    @GetMapping("/{version}/${AvisContenuScope.PROTECTED}/{id}",produces = [MediaType.APPLICATION_JSON_VALUE])
+    @GetMapping("/{version}/${AvisContenuScope.PRIVATE}/{id}",produces = [MediaType.APPLICATION_JSON_VALUE])
     suspend fun getById(req: HttpServletRequest, @PathVariable id: Long) = coroutineScope {
         val startNanos = System.nanoTime()
         try {
-            mapOf("accounts" to s.findById(id))
+            mapOf("avis" to s.findById(id))
         } finally {
             sentry.callToMetric(
                 MetricModel(

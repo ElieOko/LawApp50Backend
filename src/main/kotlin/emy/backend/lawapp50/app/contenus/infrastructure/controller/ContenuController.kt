@@ -25,7 +25,7 @@ class ContenuController(
     private val sentry : SentryService
 ) {
     @Operation(summary = "Creation de contenu")
-    @PostMapping("/{version}/${ContenuScope.PROTECTED}",produces = [MediaType.APPLICATION_JSON_VALUE])
+    @PostMapping("/{version}/${ContenuScope.PRIVATE}",produces = [MediaType.APPLICATION_JSON_VALUE])
     suspend fun createContenu(
         @Valid @RequestBody rData: ContenuRequest, req: HttpServletRequest
     ) = coroutineScope {
@@ -60,7 +60,7 @@ class ContenuController(
     suspend fun getAllContenu(req: HttpServletRequest) = coroutineScope {
         val startNanos = System.nanoTime()
         try {
-            mapOf("accounts" to s.getAll())
+            mapOf("contenu" to s.getAll())
         } finally {
             sentry.callToMetric(
                 MetricModel(
@@ -74,11 +74,11 @@ class ContenuController(
         }
     }
 
-    @GetMapping("/{version}/${ContenuScope.PROTECTED}/{id}",produces = [MediaType.APPLICATION_JSON_VALUE])
+    @GetMapping("/{version}/${ContenuScope.PRIVATE}/{id}",produces = [MediaType.APPLICATION_JSON_VALUE])
     suspend fun getById(req: HttpServletRequest, @PathVariable id: Long) = coroutineScope {
         val startNanos = System.nanoTime()
         try {
-            mapOf("accounts" to s.findById(id))
+            mapOf("contenu" to s.findById(id))
         } finally {
             sentry.callToMetric(
                 MetricModel(

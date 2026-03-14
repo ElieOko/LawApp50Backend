@@ -62,7 +62,7 @@ class LikeContenusController (
     suspend fun getAllFavoris(req: HttpServletRequest) = coroutineScope {
         val startNanos = System.nanoTime()
         try {
-            mapOf("accounts" to s.getAll())
+            mapOf("likes" to s.getAll())
         } finally {
             sentry.callToMetric(
                 MetricModel(
@@ -80,7 +80,7 @@ class LikeContenusController (
     suspend fun getById(req: HttpServletRequest, @PathVariable id: Long) = coroutineScope {
         val startNanos = System.nanoTime()
         try {
-            mapOf("accounts" to s.findById(id))
+            mapOf("likes" to s.findById(id))
         } finally {
             sentry.callToMetric(
                 MetricModel(
