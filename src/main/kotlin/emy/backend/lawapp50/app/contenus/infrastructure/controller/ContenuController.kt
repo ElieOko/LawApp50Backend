@@ -1,8 +1,11 @@
 package emy.backend.lawapp50.app.contenus.infrastructure.controller
 
 import emy.backend.lawapp50.app.contenus.application.service.ContenuService
+import emy.backend.lawapp50.app.contenus.application.service.ScopeContenuService
 import emy.backend.lawapp50.app.contenus.domain.model.ContenuRequest
 import emy.backend.lawapp50.app.contenus.infrastructure.persistance.entity.ContenuEntity
+import emy.backend.lawapp50.app.contenus.infrastructure.persistance.entity.ScopeContenuEntity
+import emy.backend.lawapp50.app.contenus.infrastructure.persistance.repository.ScopeContenuRepository
 import emy.backend.lawapp50.app.user.application.service.UserService
 import emy.backend.lawapp50.route.contenu.ContenuScope
 import emy.backend.lawapp50.security.monitoring.MetricModel
@@ -22,7 +25,8 @@ import java.time.LocalDateTime
 class ContenuController(
     private val s: ContenuService,
     private val userS: UserService,
-    private val sentry : SentryService
+    private val sentry : SentryService,
+    private val scop : ScopeContenuRepository
 ) {
     @Operation(summary = "Creation de contenu")
     @PostMapping("/{version}/${ContenuScope.PRIVATE}",produces = [MediaType.APPLICATION_JSON_VALUE])
@@ -38,10 +42,21 @@ class ContenuController(
                 description = rData.description,
                 fileContent = rData.fileContent,
                 isActive = true,
-                createdAt = LocalDateTime.now()
+                createdAt = LocalDateTime.now(),
+                typeContenuId = rData.typeContenuId
             )
 
             val createContenu = s.create(data)
+
+            val scope = rData.scope
+            val dataScopeContenu = scope.map{
+                 ScopeContenuEntity(
+                    scopeId = it?.id!!,
+                    contenuId = createContenu.id!!,
+                    isActive = true
+                )
+            }.toList()
+            val saveScopeContenu = dataScopeContenu.map{ scop.save(it) }
             mapOf("contenu" to createContenu)
         } finally {
             sentry.callToMetric(

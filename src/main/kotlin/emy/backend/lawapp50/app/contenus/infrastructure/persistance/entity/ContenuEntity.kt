@@ -11,12 +11,14 @@ class ContenuEntity(
     val id: Long? = null,
     @Column("user_id")
     var userId: Long,
+    @Column("type_contenu_id")
+    val typeContenuId: Long?,
     @Column("title")
     var title: String,
     @Column("description")
     var description: String,
     @Column("file_content")
-    var fileContent : String,
+    var fileContent : String?,
     @Column("is_active")
     var isActive: Boolean = false,
     @Column("created_at")
