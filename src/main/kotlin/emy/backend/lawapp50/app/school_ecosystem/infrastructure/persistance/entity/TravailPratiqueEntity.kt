@@ -24,6 +24,8 @@ class TravailPratiqueEntity(
     val userId : Long,
     @Column("etablissement_id")
     val etablissementId : Long,
+    @Column("faculte_id")
+    val faculteId : Long,
     @Column("start_date")
     val startDate: LocalDate,
     @Column("end_date")
@@ -43,6 +45,7 @@ fun TravailPratiqueEntity.toDomain() = TravailPratique(
     fileContent = this.fileContent,
     userId = this.userId,
     etablissementId = this.etablissementId,
+    faculteId = this.faculteId,
     startDate = this.startDate,
-    endDate = this.endDate,
+    endDate = this.endDate
 )
