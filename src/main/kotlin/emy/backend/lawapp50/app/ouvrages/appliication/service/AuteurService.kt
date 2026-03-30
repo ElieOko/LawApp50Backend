@@ -1,4 +1,4 @@
-package emy.backend.lawapp50.app.ouvrages.service
+package emy.backend.lawapp50.app.ouvrages.appliication.service
 
 import emy.backend.lawapp50.app.ouvrages.infrastructure.persistance.entity.AuteurEntity
 import emy.backend.lawapp50.app.ouvrages.infrastructure.persistance.repository.AuteurRepository

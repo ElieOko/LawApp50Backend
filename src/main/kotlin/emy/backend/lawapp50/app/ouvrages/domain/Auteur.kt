@@ -1,3 +1,13 @@
 package emy.backend.lawapp50.app.ouvrages.domain
 
-data class Auteur()
+import java.time.LocalDate
+import java.time.LocalDateTime
+
+data class Auteur(
+    val id:Long,
+    val name:String,
+    val prenom:String?,
+    val dateNaissance: LocalDate?,
+    val nationalite:String?,
+    val createdAt: LocalDateTime
+)
