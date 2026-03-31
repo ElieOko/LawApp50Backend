@@ -24,7 +24,7 @@ class FavoriContenuController(
     private val userS: UserService,
 ) {
     @Operation(summary = "Creation de favoris")
-    @PostMapping("/{version}/${FavoriScope.PROTECTED}",produces = [MediaType.APPLICATION_JSON_VALUE])
+    @PostMapping("/{version}/${FavoriScope.PRIVATE}",produces = [MediaType.APPLICATION_JSON_VALUE])
     suspend fun createFavoris(
         @Valid @RequestBody rData: FavorisContenuRequest, req: HttpServletRequest
     ) = coroutineScope {
@@ -62,7 +62,7 @@ class FavoriContenuController(
     suspend fun getAllFavoris(req: HttpServletRequest) = coroutineScope {
         val startNanos = System.nanoTime()
         try {
-            mapOf("accounts" to s.getAll())
+            mapOf("favoris" to s.getAll())
         } finally {
             sentry.callToMetric(
                 MetricModel(
@@ -76,11 +76,11 @@ class FavoriContenuController(
         }
     }
 
-    @GetMapping("/{version}/${FavoriScope.PROTECTED}/{id}",produces = [MediaType.APPLICATION_JSON_VALUE])
+    @GetMapping("/{version}/${FavoriScope.PRIVATE}/{id}",produces = [MediaType.APPLICATION_JSON_VALUE])
     suspend fun getById(req: HttpServletRequest, @PathVariable id: Long) = coroutineScope {
         val startNanos = System.nanoTime()
         try {
-            mapOf("accounts" to s.findById(id))
+            mapOf("favoris" to s.findById(id))
         } finally {
             sentry.callToMetric(
                 MetricModel(

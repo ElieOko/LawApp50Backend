@@ -24,7 +24,7 @@ class CommentaireResponseContenuController(
 ) {
 
     @Operation(summary = "Creation de categorie")
-    @PostMapping("/{version}/${ResponseScope.PROTECTED}",produces = [MediaType.APPLICATION_JSON_VALUE])
+    @PostMapping("/{version}/${ResponseScope.PRIVATE}",produces = [MediaType.APPLICATION_JSON_VALUE])
     suspend fun createResponseContenuCommentaire(
         @Valid @RequestBody rData: CommentaireResponseContenuRequest, req: HttpServletRequest
     ) = coroutineScope {
@@ -38,7 +38,7 @@ class CommentaireResponseContenuController(
             )
 
             val createComResponse = s.create(data)
-            mapOf("contenu" to createComResponse)
+            mapOf("responseCom" to createComResponse)
         } finally {
             sentry.callToMetric(
                 MetricModel(
@@ -57,7 +57,7 @@ class CommentaireResponseContenuController(
     suspend fun getAllResponseContenuCommentaire(req: HttpServletRequest) = coroutineScope {
         val startNanos = System.nanoTime()
         try {
-            mapOf("accounts" to s.getAll())
+            mapOf("responseCom" to s.getAll())
         } finally {
             sentry.callToMetric(
                 MetricModel(
@@ -72,11 +72,11 @@ class CommentaireResponseContenuController(
     }
 
     @Operation(summary = "recuperer une Response Contenu Commentaire par id")
-    @GetMapping("/{version}/${ResponseScope.PROTECTED}/{id}",produces = [MediaType.APPLICATION_JSON_VALUE])
+    @GetMapping("/{version}/${ResponseScope.PRIVATE}/{id}",produces = [MediaType.APPLICATION_JSON_VALUE])
     suspend fun getById(req: HttpServletRequest, @PathVariable id: Long) = coroutineScope {
         val startNanos = System.nanoTime()
         try {
-            mapOf("accounts" to s.findById(id))
+            mapOf("responseCom" to s.findById(id))
         } finally {
             sentry.callToMetric(
                 MetricModel(

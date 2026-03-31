@@ -24,7 +24,7 @@ class CommentaireContenuController(
     private val sentry : SentryService
 ) {
     @Operation(summary = "Creation de categorie")
-    @PostMapping("/{version}/${CommentaireScope.PROTECTED}",produces = [MediaType.APPLICATION_JSON_VALUE])
+    @PostMapping("/{version}/${CommentaireScope.PRIVATE}",produces = [MediaType.APPLICATION_JSON_VALUE])
     suspend fun createCommentaire(
         @Valid @RequestBody rData: CommentaireContenuRequest, req: HttpServletRequest
     ) = coroutineScope {
@@ -38,7 +38,7 @@ class CommentaireContenuController(
             )
 
             val createCom = s.create(data)
-            mapOf("contenu" to createCom)
+            mapOf("commentaire" to createCom)
         } finally {
             sentry.callToMetric(
                 MetricModel(
@@ -53,11 +53,11 @@ class CommentaireContenuController(
     }
 
     @Operation(summary = "recuperation des commentaire contenu")
-    @GetMapping("/{version}/${CommentaireScope.PROTECTED}",produces = [MediaType.APPLICATION_JSON_VALUE])
+    @GetMapping("/{version}/${CommentaireScope.PRIVATE}",produces = [MediaType.APPLICATION_JSON_VALUE])
     suspend fun getAllCategorie(req: HttpServletRequest) = coroutineScope {
         val startNanos = System.nanoTime()
         try {
-            mapOf("accounts" to s.getAll())
+            mapOf("commentaire" to s.getAll())
         } finally {
             sentry.callToMetric(
                 MetricModel(
@@ -76,15 +76,15 @@ class CommentaireContenuController(
     suspend fun getById(req: HttpServletRequest, @PathVariable id: Long) = coroutineScope {
         val startNanos = System.nanoTime()
         try {
-            mapOf("accounts" to s.findById(id))
+            mapOf("commentaire" to s.findById(id))
         } finally {
             sentry.callToMetric(
                 MetricModel(
                     startNanos = startNanos,
                     status = "200",
                     route = "${req.method} /${req.requestURI}",
-                    countName = "api.categorie.getaonecommentaire.count",
-                    distributionName = "api.categorie.getaonecommentaire.latency"
+                    countName = "api.commentaire.getaonecommentaire.count",
+                    distributionName = "api.commentaire.getaonecommentaire.latency"
                 )
             )
         }

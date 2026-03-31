@@ -1,8 +1,11 @@
 package emy.backend.lawapp50.app.contenus.application.service
 
 import emy.backend.lawapp50.app.contenus.infrastructure.persistance.entity.CommentaireContenuEntity
+import emy.backend.lawapp50.app.contenus.infrastructure.persistance.entity.LikeContenusEntity
 import emy.backend.lawapp50.app.contenus.infrastructure.persistance.repository.CommentaireContenuRepository
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.toList
 import org.springframework.stereotype.Service
 
 @Service
@@ -15,7 +18,7 @@ class CommentaireContenuService(private val r: CommentaireContenuRepository) {
         return r.findById(id)
     }
 
-    suspend fun getAll():Flow<CommentaireContenuEntity>{
-        return r.findAll()
+    suspend fun getAll(): List<CommentaireContenuEntity>{
+        return r.findAll().map{it}.toList()
     }
 }

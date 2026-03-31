@@ -22,7 +22,7 @@ class CategorieContenuController(
     private val sentry : SentryService
 ) {
     @Operation(summary = "Creation de categorie contenu")
-    @PostMapping("/{version}/${CategorieContenuScope.PROTECTED}",produces = [MediaType.APPLICATION_JSON_VALUE])
+    @PostMapping("/{version}/${CategorieContenuScope.PRIVATE}",produces = [MediaType.APPLICATION_JSON_VALUE])
     suspend fun createCategorieContenu(
         @Valid @RequestBody rData: CategorieContenuRequest, req: HttpServletRequest
     ) = coroutineScope {
@@ -35,7 +35,7 @@ class CategorieContenuController(
             )
 
             val createContenu = s.create(data)
-            mapOf("contenu" to createContenu)
+            mapOf("categorieContenu" to createContenu)
         } finally {
             sentry.callToMetric(
                 MetricModel(
@@ -54,7 +54,7 @@ class CategorieContenuController(
     suspend fun getAllCategorieContenu(req: HttpServletRequest) = coroutineScope {
         val startNanos = System.nanoTime()
         try {
-            mapOf("accounts" to s.getAll())
+            mapOf("categorieContenu" to s.getAll())
         } finally {
             sentry.callToMetric(
                 MetricModel(
@@ -69,11 +69,11 @@ class CategorieContenuController(
     }
 
     @Operation(summary = "recuperer une categorie contenu par id")
-    @GetMapping("/{version}/${CategorieContenuScope.PROTECTED}/{id}",produces = [MediaType.APPLICATION_JSON_VALUE])
+    @GetMapping("/{version}/${CategorieContenuScope.PRIVATE}/{id}",produces = [MediaType.APPLICATION_JSON_VALUE])
     suspend fun getById(req: HttpServletRequest, @PathVariable id: Long) = coroutineScope {
         val startNanos = System.nanoTime()
         try {
-            mapOf("accounts" to s.findById(id))
+            mapOf("categorieContenu" to s.findById(id))
         } finally {
             sentry.callToMetric(
                 MetricModel(
