@@ -15,7 +15,7 @@ class TwilioService(
         channel : String = "sms"
     ): String? {
       val verification = Verification
-          .creator("AC4843f3ee6e7982e2bf638a3a8b70f5fb",contact, channel)
+          .creator("",contact, channel)
           .setLocale("fr")
           .create()
         log.info("Status :${verification.status}")
@@ -28,7 +28,7 @@ class TwilioService(
         contact: String = "+243827824163"
     ): String? {
         val verificationCheck = VerificationCheck
-            .creator("AC4843f3ee6e7982e2bf638a3a8b70f5fb")
+            .creator("")
             .setCode(code)
             .setTo(contact)
             .create()
