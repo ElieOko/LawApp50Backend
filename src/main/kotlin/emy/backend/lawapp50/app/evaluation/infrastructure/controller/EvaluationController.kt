@@ -20,7 +20,7 @@ import org.springframework.web.server.ResponseStatusException
 @RequestMapping("api")
 @Profile("dev")
 class TravailPratiqueController(
-    private val service: TravailPratiqueService,
+    private val service: EvaluationService,
     private val etsService: EtablissementService,
     private val promotionService: PromotionService,
     private val accountUserService: AccountUserService,
@@ -32,18 +32,14 @@ class TravailPratiqueController(
     @PostMapping("/{version}/${TpScope.PRIVATE}", consumes = [MediaType.APPLICATION_JSON_VALUE])
     suspend fun createTP(
         request : HttpServletRequest,
-        @Valid @RequestBody data : TravailPratiqueRequest) = coroutineScope {
+        @Valid @RequestBody data : EvaluationRequest) = coroutineScope {
         val startNanos = System.nanoTime()
         val session = auth.user()
         try {
-            etsService.findById(data.tp.etablissementId)
-            promotionService.findById(data.tp.promotionId)
-            faculteService.findById(data.tp.faculteId)
             val account = accountUserService.findMultipleAccountUser(session?.first?.userId?:0)
             if (account.isNotEmpty()){
                 if (account[0].accountId == 3L){
-                    val state = service.create(data.tp.toDomain(session?.first?.userId!!))
-                    
+                    val state = service.create(data.toDomain(session?.first?.userId!!))
                 }
                 else{
                     ResponseStatusException(HttpStatusCode.valueOf(403), "$RESSOURCE_NOT_ALLOW, vous n'êtes pas enseignant.")
@@ -51,8 +47,6 @@ class TravailPratiqueController(
             } else {
                 ResponseStatusException(HttpStatusCode.valueOf(403), RESSOURCE_NOT_ALLOW)
             }
-
-//            mapOf("tps" to service.getAll().toList())
         } finally {
             sentry.callToMetric(
                 MetricModel(
@@ -70,7 +64,7 @@ class TravailPratiqueController(
     suspend fun getAllTP(request: HttpServletRequest) = coroutineScope {
         val startNanos = System.nanoTime()
         try {
-//            mapOf("tps" to service.getAll().toList())
+
         } finally {
             sentry.callToMetric(
                 MetricModel(

@@ -10,7 +10,7 @@ import org.springframework.web.server.ResponseStatusException
 
 @Service
 class TravailPratiqueService (
-    private val repository : TravailPratiqueRepository
+    private val repository : EvaluationRepository
 ) {
     suspend fun create(model : TravailPratique) = coroutineScope {
         repository.save(model.toEntity())
