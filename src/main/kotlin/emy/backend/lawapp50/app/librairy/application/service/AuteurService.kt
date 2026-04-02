@@ -1,4 +1,4 @@
-package emy.backend.lawapp50.app.librairy.appliication.service
+package emy.backend.lawapp50.app.librairy.application.service
 
 //@Service
 //class AuteurService( private val rep : AuteurRepository) {

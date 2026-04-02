@@ -1,4 +1,4 @@
-package emy.backend.lawapp50.app.ouvrages.enum
+package emy.backend.lawapp50.app.librairy.enum
 
 enum class OuvrageEnum {
 }

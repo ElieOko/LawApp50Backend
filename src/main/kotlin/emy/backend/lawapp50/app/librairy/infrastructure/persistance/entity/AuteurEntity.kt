@@ -1,30 +1,23 @@
-package emy.backend.lawapp50.app.ouvrages.infrastructure.persistance.entity
+package emy.backend.lawapp50.app.librairy.infrastructure.persistance.entity
 
-import jakarta.persistence.Column
-import jakarta.persistence.Entity
-import jakarta.persistence.GeneratedValue
-import jakarta.persistence.GenerationType
-import jakarta.persistence.Id
-import jakarta.persistence.Table
+import org.springframework.data.annotation.*
+import org.springframework.data.relational.core.mapping.*
 import java.time.LocalDate
 import java.time.LocalDateTime
 
-@Entity
 @Table(name = "auteurs")
-data class AuteurEntity(
+class AuteurEntity(
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
+    @Column( "id")
     val id: Long? = null,
-    @Column(name = "name", nullable = false)
+    @Column("name", )
     val name:String,
-    @Column(name = "prenom", nullable = true)
+    @Column("prenom",)
     val prenom:String?,
-    @Column(name = "date_naissance", nullable = true)
+    @Column("date_naissance")
     val dateNaissance: LocalDate?,
-    @Column(name = "nationalite", nullable = true)
+    @Column("nationalite")
     val nationalite:String?,
-    @Column(name = "created_at", nullable = false)
-    val createdAt: LocalDateTime
-
+    @Column("created_at")
+    val createdAt: LocalDateTime = LocalDateTime.now()
 )

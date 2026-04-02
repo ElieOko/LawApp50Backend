@@ -1,4 +1,4 @@
-package emy.backend.lawapp50.app.librairy.appliication.service
+package emy.backend.lawapp50.app.librairy.application.service
 
 import emy.backend.lawapp50.app.librairy.infrastructure.persistance.entity.DocumentEntity
 import emy.backend.lawapp50.app.librairy.infrastructure.persistance.repository.DocumentRepository

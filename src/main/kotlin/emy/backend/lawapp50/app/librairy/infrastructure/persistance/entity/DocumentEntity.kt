@@ -1,22 +1,22 @@
-package emy.backend.lawapp50.app.ouvrages.infrastructure.persistance.entity
+package emy.backend.lawapp50.app.librairy.infrastructure.persistance.entity
 
 import org.springframework.data.annotation.*
 import org.springframework.data.relational.core.mapping.*
 import java.time.LocalDateTime
 
-@Table(  "ouvrages")
+@Table(  "documents")
 class DocumentEntity(
     @Id
     @Column("id")
     val id      : Long? = null,
     @Column("user_id")
     val userId  : Long,
-    @Column("titre")
-    val titre   : String,
+    @Column("title")
+    val title   : String,
     @Column("description")
     val description   : String,
-    @Column("titre")
-    val typeDocument : String,
+    @Column("type_document")
+    val typeDocument : Long,
     @Column("background_image")
     val backGroundImage : String? = null,
     @Column("file_book")

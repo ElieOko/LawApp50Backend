@@ -1,6 +1,6 @@
-package emy.backend.lawapp50.app.ouvrages.domain
+package emy.backend.lawapp50.app.librairy.domain
 
-import emy.backend.lawapp50.app.ouvrages.enum.*
+import emy.backend.lawapp50.app.librairy.enum.*
 import java.time.LocalDate
 
 data class Ouvrage(
