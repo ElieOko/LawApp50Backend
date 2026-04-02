@@ -19,18 +19,15 @@ import org.springframework.web.server.ResponseStatusException
 @RestController
 @RequestMapping("api")
 @Profile("dev")
-class TravailPratiqueController(
+class EvaluationController(
     private val service: EvaluationService,
-    private val etsService: EtablissementService,
-    private val promotionService: PromotionService,
     private val accountUserService: AccountUserService,
-    private val faculteService: FaculteService,
     private val sentry: SentryService,
     private val auth: Auth,
 ) {
     @Operation(summary = "Création de TP")
     @PostMapping("/{version}/${TpScope.PRIVATE}", consumes = [MediaType.APPLICATION_JSON_VALUE])
-    suspend fun createTP(
+    suspend fun createSessionEvaluation(
         request : HttpServletRequest,
         @Valid @RequestBody data : EvaluationRequest) = coroutineScope {
         val startNanos = System.nanoTime()
@@ -59,9 +56,9 @@ class TravailPratiqueController(
             )
         }
     }
-    @Operation(summary = "Liste de TP")
+    @Operation(summary = "Liste des evaluations")
     @GetMapping("/{version}/${TpScope.PUBLIC}",produces = [MediaType.APPLICATION_JSON_VALUE])
-    suspend fun getAllTP(request: HttpServletRequest) = coroutineScope {
+    suspend fun getAllEvaluation(request: HttpServletRequest) = coroutineScope {
         val startNanos = System.nanoTime()
         try {
 

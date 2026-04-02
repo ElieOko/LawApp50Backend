@@ -5,13 +5,13 @@ import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.*
 import java.time.LocalDateTime
 
-@Table(name = "questions")
+@Table(name = "evaluation_questions")
 class QuestionEntity(
     @Id
     @Column("id")
     val id: Long? = null,
-    @Column("travail_pratique_id")
-    val travailPratiqueId : Long,
+    @Column("evaluation_id")
+    val evaluationId : Long,
     @Column("title")
     val title : String,
     @Column("point")
@@ -24,7 +24,7 @@ class QuestionEntity(
 
 fun QuestionEntity.toDomain() = Question(
     id = this.id,
-    travailPratiqueId = this.travailPratiqueId,
+    evaluationId = this.evaluationId,
     title = this.title,
     point = this.point,
 )

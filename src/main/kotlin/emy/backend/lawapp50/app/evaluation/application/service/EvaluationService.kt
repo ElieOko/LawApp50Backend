@@ -9,10 +9,10 @@ import org.springframework.stereotype.*
 import org.springframework.web.server.ResponseStatusException
 
 @Service
-class TravailPratiqueService (
+class EvaluationService (
     private val repository : EvaluationRepository
 ) {
-    suspend fun create(model : TravailPratique) = coroutineScope {
+    suspend fun create(model : Evaluation) = coroutineScope {
         repository.save(model.toEntity())
     }
     suspend fun findById(id : Long) = coroutineScope {

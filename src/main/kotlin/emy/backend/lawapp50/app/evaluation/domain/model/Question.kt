@@ -4,14 +4,14 @@ import emy.backend.lawapp50.app.evaluation.infrastructure.persistance.entity.Que
 
 class Question(
     val id: Long? = null,
-    val travailPratiqueId : Long,
+    val evaluationId : Long,
     val title : String,
     val point : Double = 0.0,
 )
 
 fun Question.toEntity() = QuestionEntity(
     id = this.id,
-    travailPratiqueId = this.travailPratiqueId,
+    evaluationId = this.evaluationId,
     title = this.title,
     point = this.point,
 )

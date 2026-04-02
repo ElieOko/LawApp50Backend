@@ -4,6 +4,7 @@ import jakarta.validation.constraints.NotNull
 
 class QuestionOptionRequest(
     @NotNull
-    val option : String,
+    var option : String,
+    val isValid : Boolean = false,
 )
 

@@ -4,7 +4,7 @@ import jakarta.validation.constraints.NotNull
 
 class QuestionOuverteRequest(
     @NotNull
-    val title : String,
+    var title : String,
     var fileContent : String? =  null,
 )
 

@@ -4,8 +4,8 @@ import jakarta.validation.constraints.NotNull
 
 class QuestionRequest(
     @NotNull
-    val title : String,
+    var title : String,
     @NotNull
-    val point : Double = 0.0,
+    var point : Double = 0.0,
 )
 
