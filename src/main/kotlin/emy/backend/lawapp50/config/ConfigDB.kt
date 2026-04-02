@@ -1,7 +1,5 @@
 package emy.backend.lawapp50.config
 
-import org.flywaydb.core.Flyway
-import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.flyway.autoconfigure.FlywayProperties
