@@ -26,6 +26,10 @@ class EvaluationController(
     private val accountUserService: AccountUserService,
     private val sentry: SentryService,
     private val auth: Auth,
+    private val questionOuverteService: QuestionOuverteService,
+    private val questionOptionService: QuestionOptionService,
+    private val questionCaseStudyService: QuestionCaseStudyService,
+    private val questionService: QuestionService,
 ) {
     @Operation(summary = "Création de la session d'evaluation")
     @PostMapping("/{version}/${EvaluationScope.PRIVATE}", consumes = [MediaType.APPLICATION_JSON_VALUE])
@@ -38,8 +42,21 @@ class EvaluationController(
             val account = accountUserService.findMultipleAccountUser(session?.first?.userId?:0)
             if (account.isNotEmpty()){
                 if (account[0].accountId == 3L){
+                    if (data.ouverte?.isEmpty() == true && data.option?.isEmpty() == true  && data.caseStudy?.isEmpty() == true) throw ResponseStatusException(HttpStatusCode.valueOf(404), "Vous devez avoir au moins des questions avant de créer vos évaluations.")
                     val state = service.create(data.toDomain(session?.first?.userId!!))
-
+                    data.option?.forEach {qt->
+                        val questionSave = questionService.create(qt.question.toDomain(state.id!!))
+                        qt.questionOption?.forEach { questionOptionService.create(it.toDomain(questionSave.id!!)) }
+                    }
+                    data.ouverte?.forEach { qt->
+                        val questionSave = questionService.create(qt.question.toDomain(state.id!!))
+                        qt.questionOuverte?.forEach { questionOuverteService.create(it.toDomain(questionSave.id!!)) }
+                    }
+                    data.caseStudy?.forEach { qt->
+                        val questionSave = questionService.create(qt.question.toDomain(state.id!!))
+                        qt.questionCaseStudy?.forEach { questionCaseStudyService.create(it.toDomain(questionSave.id!!))}
+                    }
+                    ResponseEntity.ok(mapOf("message" to "Votre évaluation a été créer avec succès"))
                 }
                 else{
                     ResponseStatusException(HttpStatusCode.valueOf(403), "$RESSOURCE_NOT_ALLOW, vous n'êtes pas enseignant.")
@@ -53,8 +70,8 @@ class EvaluationController(
                     startNanos = startNanos,
                     status = "200",
                     route = "${request.method} /${request.requestURI}",
-                    countName = "api.tp.createTP.count",
-                    distributionName = "api.tp.createTP.latency"
+                    countName = "api.evaluation.createSessionEvaluation.count",
+                    distributionName = "api.evaluation.createSessionEvaluation.latency"
                 )
             )
         }
@@ -72,8 +89,8 @@ class EvaluationController(
                     startNanos = startNanos,
                     status = "200",
                     route = "${request.method} /${request.requestURI}",
-                    countName = "api.tp.getAllTP.count",
-                    distributionName = "api.tp.getAllTP.latency"
+                    countName = "api.evaluation.getAllEvaluation.count",
+                    distributionName = "api.evaluation.getAllEvaluation.latency"
                 )
             )
         }
