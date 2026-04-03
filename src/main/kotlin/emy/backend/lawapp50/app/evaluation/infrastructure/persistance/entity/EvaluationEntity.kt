@@ -26,8 +26,8 @@ class EvaluationEntity(
     val endDate: LocalDate,
     @Column("is_active")
     val isActive: Boolean = true,
-    @Column("is_closed")
-    val isClosed: Boolean = true,
+//    @Column("is_closed")
+//    val isClosed: Boolean = true,
     @Column("created_at")
     val createdAt: LocalDateTime = LocalDateTime.now(),
 )
