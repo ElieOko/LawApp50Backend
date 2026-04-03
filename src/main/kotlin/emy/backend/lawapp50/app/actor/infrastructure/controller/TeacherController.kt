@@ -7,6 +7,7 @@ import emy.backend.lawapp50.app.actor.infrastructure.persistance.repository.Teac
 import emy.backend.lawapp50.app.evaluation.infrastructure.persistance.repository.*
 import emy.backend.lawapp50.app.user.application.service.AccountUserService
 import emy.backend.lawapp50.app.user.domain.model.AccountUser
+import emy.backend.lawapp50.app.user.domain.model.request.CertificationState
 import emy.backend.lawapp50.route.actor.*
 import emy.backend.lawapp50.security.*
 import emy.backend.lawapp50.security.monitoring.*
@@ -27,7 +28,7 @@ class TeacherController(
     private val account : AccountUserService,
     private val auth: Auth,
     private val sentry : SentryService,
-    private val teacherEtablissementRepository: TeacherEtablissementRepository
+    private val teacherEtablissementRepository : TeacherEtablissementRepository,
 ) {
     private val log = LoggerFactory.getLogger(this::class.java)
     @Operation(summary = "Liste des Enseignatn")
@@ -56,20 +57,16 @@ class TeacherController(
         val userConnect = auth.user()
         try {
             val data = data2.toDomain(userConnect?.first?.userId)
-//            if (data2.etablissement.isNotEmpty()) {
             service.checkUser(data.userId!!)
             val teacher = service.create(data)
             val state = account.save(AccountUser(userId = data.userId!!, accountId = 3))
-            data2.etablissement.forEach {
+            data2.etablissement?.forEach {
                 teacherEtablissementRepository.save(TeacherEtablissementEntity(teacherId = teacher.teacherId!!, etablissementId = it.etablisementId))
             }
             ResponseEntity.status(201).body(mapOf(
                 "message" to "Compte enseignant assigné avec succès",
                 "teachers" to teacher
             ))
-//            }
-//            ResponseEntity.status(404).body(mapOf("message" to "Etablissement manquante"))
-
         } finally {
             sentry.callToMetric(
                 MetricModel(
@@ -81,5 +78,43 @@ class TeacherController(
                 )
             )
         }
+    }
+
+    @Operation(summary = "Validtion compte enseignant")
+    @PutMapping("/api/{version}/${TeacherScope.PROTECTED}/validation")
+    suspend fun goValidateAccountTeacher(
+        request: HttpServletRequest,
+        @RequestBody @Valid accountTeacher : ValidationAccountTeacher
+    )  = coroutineScope {
+        val startNanos = System.nanoTime()
+        try {
+            val session = auth.user()
+            val state: Boolean? = session?.second?.find{ true }
+            when (state) {
+                true -> {
+                    val data = service.findByIdTeacher(accountTeacher.teacherId)
+                    service.create(data!!)
+                    ResponseEntity.ok(
+                        mapOf(
+                            "message" to if (accountTeacher.state) "Validation successful" else "Validation cancel",
+                            "user" to data
+                        )
+                    )
+                }
+                false,null -> {
+                    ResponseEntity.status(403).body(mapOf("message" to "Accès non autorisé"))}
+            }
+        } finally {
+            sentry.callToMetric(
+                MetricModel(
+                    startNanos = startNanos,
+                    status = "200",
+                    route = "${request.method} /${request.requestURI}",
+                    countName = "api.validate.goValidateAccountTeacher.count",
+                    distributionName = "api.validate.goValidateAccountTeacher.latency"
+                )
+            )
+        }
+
     }
 }

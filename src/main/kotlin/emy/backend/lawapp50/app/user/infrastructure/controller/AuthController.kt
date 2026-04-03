@@ -47,6 +47,7 @@ class AuthController(
         val startNanos = System.nanoTime()
         val redis = RedisStorage()
         try {
+            if (!isEmailValid(req.email)) throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Mail invalid!.")
             val userSystem = req.toDomain()
             val state = req.confirmPassword == req.password
             if (!state) throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Mot de passe invalide.")
@@ -122,41 +123,41 @@ class AuthController(
         }
     }
 
-    @PostMapping("/api/{version}/public/callback/google")
-    suspend fun callBackGoogle(request: HttpServletRequest,@RequestBody body: Any?){
-        val startNanos = System.nanoTime()
-        try {
-
-        } finally {
-            sentry.callToMetric(
-                MetricModel(
-                    startNanos = startNanos,
-                    status = "200",
-                    route = "${request.method} /${request.requestURI}",
-                    countName = "api.auth.callBackGoogle.count",
-                    distributionName = "api.auth.callBackGoogle.latency"
-                )
-            )
-        }
-    }
-
-    @PostMapping("/api/{version}/public/callback/apple")
-    suspend fun callBackApple(request: HttpServletRequest,@RequestBody body: Any?){
-        val startNanos = System.nanoTime()
-        try {
-
-        } finally {
-            sentry.callToMetric(
-                MetricModel(
-                    startNanos = startNanos,
-                    status = "200",
-                    route = "${request.method} /${request.requestURI}",
-                    countName = "api.auth.callBackApple.count",
-                    distributionName = "api.auth.callBackApple.latency"
-                )
-            )
-        }
-    }
+//    @PostMapping("/api/{version}/public/callback/google")
+//    suspend fun callBackGoogle(request: HttpServletRequest,@RequestBody body: Any?){
+//        val startNanos = System.nanoTime()
+//        try {
+//
+//        } finally {
+//            sentry.callToMetric(
+//                MetricModel(
+//                    startNanos = startNanos,
+//                    status = "200",
+//                    route = "${request.method} /${request.requestURI}",
+//                    countName = "api.auth.callBackGoogle.count",
+//                    distributionName = "api.auth.callBackGoogle.latency"
+//                )
+//            )
+//        }
+//    }
+//
+//    @PostMapping("/api/{version}/public/callback/apple")
+//    suspend fun callBackApple(request: HttpServletRequest,@RequestBody body: Any?){
+//        val startNanos = System.nanoTime()
+//        try {
+//
+//        } finally {
+//            sentry.callToMetric(
+//                MetricModel(
+//                    startNanos = startNanos,
+//                    status = "200",
+//                    route = "${request.method} /${request.requestURI}",
+//                    countName = "api.auth.callBackApple.count",
+//                    distributionName = "api.auth.callBackApple.latency"
+//                )
+//            )
+//        }
+//    }
 
     @GetMapping("/api/auth/google")
     fun redirectToGoogle(response: HttpServletResponse) {
@@ -198,28 +199,33 @@ class AuthController(
             )
         }
     }
-//    @Operation(summary = "OTP activation send code")
-//    @PostMapping("/api/{version}/public/otp/generate")
-//    suspend fun generateKeyOTP(request: HttpServletRequest,
-//        @RequestBody @Valid user : IdentifiantRequest
-//    ): ResponseEntity<Map<String, String?>> = coroutineScope {
-//        val startNanos = System.nanoTime()
-//        try {
-//            val result = authService.generateOTP(user.identifier)
-//            val message = mapOf("message" to result.second, "status" to result.first, "phone" to result.third)
-//             ResponseEntity.ok(message)
-//        } finally {
-//            sentry.callToMetric(
-//                MetricModel(
-//                    startNanos = startNanos,
-//                    status = "200",
-//                    route = "${request.method} /${request.requestURI}",
-//                    countName = "api.auth.generatekeyotp.count",
-//                    distributionName = "api.auth.generatekeyotp.latency"
-//                )
-//            )
-//        }
-//    }
+    @Operation(summary = "OTP activation send code")
+    @PostMapping("/api/{version}/public/otp/generate")
+    suspend fun generateKeyOTP(request: HttpServletRequest,
+        @RequestBody @Valid user : IdentifiantRequest
+    ): ResponseEntity<Map<String, String?>> = coroutineScope {
+        val startNanos = System.nanoTime()
+        val redis = RedisStorage()
+        try {
+            if (!isEmailValid(user.identifier)) throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Mail invalid!.")
+            val result = userRepository.findByPhoneOrEmail(user.identifier)?:throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Identifiant invalide !.")
+            val generator = 6.generateOtp()
+            redis.storeRedisData(user.identifier,generator,1140)
+            val sendState = senderMailAuth.sendMail(to = result.email!!,otp = generator, time =  "4")
+            val message = mapOf("message" to "Un code de validation a été envoyé cet adresse")
+             ResponseEntity.ok(message)
+        } finally {
+            sentry.callToMetric(
+                MetricModel(
+                    startNanos = startNanos,
+                    status = "200",
+                    route = "${request.method} /${request.requestURI}",
+                    countName = "api.auth.generatekeyotp.count",
+                    distributionName = "api.auth.generatekeyotp.latency"
+                )
+            )
+        }
+    }
 //
 //    @Operation(summary = "OTP activation send code")
 //    @PostMapping("/api/{version}/public/otp/verify")
@@ -281,6 +287,7 @@ class AuthController(
         }
 
     }
+
     @Operation(summary = "Reset password ")
     @PutMapping("/api/{version}/protected/reset/password")
     suspend fun resetPassword(request: HttpServletRequest,
@@ -331,54 +338,55 @@ class AuthController(
         }
     }
 
-//    @Operation(summary = "Delete Account User")
-//    @DeleteMapping("/api/{version}/protected/users/delete/user")
-//    suspend fun lockAccount(request: HttpServletRequest): ResponseEntity<Map<String, String>> = coroutineScope {
-//        val startNanos = System.nanoTime()
-//        try {
-//            val userId = auth.user()?.first?.userId
-//            val state = authService.lockedOrUnlocked(userId as Long)
-//            val message = mapOf("message" to if (state) "Votre compte a été supprimé avec succès" else "Cet utilisateur n'existe pas")
-//            ResponseEntity.ok(message)
-//        } finally {
-//            sentry.callToMetric(
-//                MetricModel(
-//                    startNanos = startNanos,
-//                    status = "200",
-//                    route = "${request.method} /${request.requestURI}",
-//                    countName = "api.auth.lockaccount.count",
-//                    distributionName = "api.auth.lockaccount.latency"
-//                )
-//            )
-//        }
-//    }
-//    @Operation(summary = "Recovery Account User")
-//    @PutMapping("/api/{version}/protected/recovery/user/{id}")
-//    suspend fun unlockAccount(request: HttpServletRequest,@PathVariable("id") id : Long): ResponseEntity<Map<String, String>> = coroutineScope {
-//        val startNanos = System.nanoTime()
-//        try {
-//            val session = auth.user()
-//            val state: Boolean? = session?.second?.find{ true }
-//            when (state) {
-//                true -> {
-//                    val state = authService.lockedOrUnlocked(id,false)
-//                    val message = mapOf("message" to if (state) "Votre compte a été restauré avec succès" else "Cet utilisateur n'existe pas")
-//                    ResponseEntity.ok(message)
-//                }
-//                false,null -> {
-//                    ResponseEntity.status(403).body(mapOf("message" to "Accès non autorisé"))
-//                }
-//            }
-//        } finally {
-//            sentry.callToMetric(
-//                MetricModel(
-//                    startNanos = startNanos,
-//                    status = "200",
-//                    route = "${request.method} /${request.requestURI}",
-//                    countName = "api.auth.unlockaccount.count",
-//                    distributionName = "api.auth.unlockaccount.latency"
-//                )
-//            )
-//        }
-//    }
+    @Operation(summary = "Delete Account User")
+    @DeleteMapping("/api/{version}/protected/users/delete/user")
+    suspend fun lockAccount(request: HttpServletRequest): ResponseEntity<Map<String, String>> = coroutineScope {
+        val startNanos = System.nanoTime()
+        try {
+            val userId = auth.user()?.first?.userId
+            val state = authService.lockedOrUnlocked(userId as Long)
+            val message = mapOf("message" to if (state) "Votre compte a été supprimé avec succès" else "Cet utilisateur n'existe pas")
+            ResponseEntity.ok(message)
+        } finally {
+            sentry.callToMetric(
+                MetricModel(
+                    startNanos = startNanos,
+                    status = "200",
+                    route = "${request.method} /${request.requestURI}",
+                    countName = "api.auth.lockaccount.count",
+                    distributionName = "api.auth.lockaccount.latency"
+                )
+            )
+        }
+    }
+
+    @Operation(summary = "Recovery Account User")
+    @PutMapping("/api/{version}/protected/recovery/user/{id}")
+    suspend fun unlockAccount(request: HttpServletRequest,@PathVariable("id") id : Long): ResponseEntity<Map<String, String>> = coroutineScope {
+        val startNanos = System.nanoTime()
+        try {
+            val session = auth.user()
+            val state: Boolean? = session?.second?.find{ true }
+            when (state) {
+                true -> {
+                    val state = authService.lockedOrUnlocked(id,false)
+                    val message = mapOf("message" to if (state) "Votre compte a été restauré avec succès" else "Cet utilisateur n'existe pas")
+                    ResponseEntity.ok(message)
+                }
+                false,null -> {
+                    ResponseEntity.status(403).body(mapOf("message" to "Accès non autorisé"))
+                }
+            }
+        } finally {
+            sentry.callToMetric(
+                MetricModel(
+                    startNanos = startNanos,
+                    status = "200",
+                    route = "${request.method} /${request.requestURI}",
+                    countName = "api.auth.unlockaccount.count",
+                    distributionName = "api.auth.unlockaccount.latency"
+                )
+            )
+        }
+    }
 }

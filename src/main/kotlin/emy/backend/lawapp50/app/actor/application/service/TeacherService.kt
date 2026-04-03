@@ -32,14 +32,14 @@ class TeacherService(
         repository.findById(id)?.toDomain() ?: throw ResponseStatusException(HttpStatusCode.valueOf(404), "ID $id not found.")
     }
     suspend fun findByIdUser(userId : Long) = coroutineScope {
-        val listEtablissement = mutableListOf<Etablissement?>()
+//        val listEtablissement = mutableListOf<Etablissement?>()
         val teacher = repository.findByUser(userId)?.toDomain()
-        val fac = faculte.findById(teacher?.faculteId!!)
+//        val fac = faculte.findById(teacher?.faculteId!!)
         val itemsEtablissement = teacherEtablissementRepository.findByTeacher(teacher?.teacherId!!)
-        itemsEtablissement?.forEach {
-            listEtablissement.add(etablissement.findById(it.etablissementId)?.toDomain())
-        }
-        mapOf("teacher" to teacher, "faculte" to fac, "etablissement" to listEtablissement)
+//        itemsEtablissement?.forEach {
+//            listEtablissement.add(etablissement.findById(it.etablissementId)?.toDomain())
+//        }
+        mapOf("teacher" to teacher)
     }
     suspend fun update(id : Long,model: Teacher): Teacher {
         val data = repository.findById(id)

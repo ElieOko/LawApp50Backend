@@ -1,9 +1,7 @@
 package emy.backend.lawapp50.app.user.domain.model
 
-import emy.backend.lawapp50.app.user.domain.model.request.AccountRequest
-import jakarta.persistence.Column
+
 import jakarta.validation.constraints.*
-import net.minidev.json.annotate.JsonIgnore
 import java.time.LocalDateTime
 
 data class User(

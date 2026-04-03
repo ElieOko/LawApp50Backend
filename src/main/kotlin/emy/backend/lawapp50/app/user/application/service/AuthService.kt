@@ -2,6 +2,8 @@ package emy.backend.lawapp50.app.user.application.service
 
 import emy.backend.lawapp50.app.actor.application.service.StudentService
 import emy.backend.lawapp50.app.actor.application.service.TeacherService
+import emy.backend.lawapp50.app.evaluation.application.service.EvaluationService
+import emy.backend.lawapp50.app.evaluation.infrastructure.persistance.repository.EvaluationRepository
 import emy.backend.lawapp50.app.user.domain.model.*
 import emy.backend.lawapp50.app.user.infrastructure.persistance.entity.*
 import emy.backend.lawapp50.app.user.domain.model.request.AccountRequest
@@ -40,6 +42,7 @@ class AuthService(
     private val accountService: AccountService,
     private val student : StudentService,
     private val teacher : TeacherService,
+    private val evaluation : EvaluationRepository
 //    private val twilio : TwilioService,
     ) {
     private val log = LoggerFactory.getLogger(this::class.java)
@@ -141,34 +144,20 @@ class AuthService(
         user.isCertified = state
         userRepository.save(user)
     }
-//    suspend fun lockedOrUnlocked(userId: Long, isLock: Boolean = true) : Boolean = coroutineScope{
-//        log.info("user method -> $userId")
-//    val state = when {
-//            userRepository.findById(userId) != null -> {
-//                log.info("in")
-//                if (prestation.findByUser(userId).toList().isNotEmpty())
-//                    prestation.setUpdateIsAvailable(userId, !isLock)
-//                if (bureau.findAllByUser(userId).toList().isNotEmpty())
-//                    bureau.setUpdateIsAvailable(userId, !isLock)
-//                if (property.findAllByUser(userId).toList().isNotEmpty())
-//                    property.setUpdateIsAvailable(userId, !isLock)
-//                if (funeraire.findAllByUser(userId).toList().isNotEmpty())
-//                    funeraire.setUpdateIsAvailable(userId, !isLock)
-//                if (festive.findAllByUser(userId).toList().isNotEmpty())
-//                    festive.setUpdateIsAvailable(userId, !isLock)
-//                if (terrain.findAllByUser(userId).toList().isNotEmpty())
-//                    terrain.setUpdateIsAvailable(userId, !isLock)
-//                if (hotel.getAllByUser(userId).toList().isNotEmpty())
-//                    hotel.setUpdateIsAvailable(userId, !isLock)
-//                if (person.findByUser(userId) != null)
-//                    person.isLock(userId, isLock)
-//                userRepository.isLock(userId, isLock)
-//                true
-//            }
-//            else-> false
-//        }
-//        state
-//    }
+
+    suspend fun lockedOrUnlocked(userId: Long, isLock: Boolean = true) : Boolean = coroutineScope{
+    val state = when {
+            userRepository.findById(userId) != null -> {
+                //evaluation
+                if (evaluation.getAllByUser(userId).toList().isNotEmpty()) evaluation.setUpdateIsAvailable(userId, !isLock)
+                userRepository.isLock(userId, isLock)
+                true
+            }
+            else-> false
+        }
+        state
+    }
+
     @Transactional
     suspend fun refresh(refreshToken: String): TokenPair {
         if(!jwtService.validateRefreshToken(refreshToken)) throw ResponseStatusException(HttpStatusCode.valueOf(403), "Invalid refresh token.")

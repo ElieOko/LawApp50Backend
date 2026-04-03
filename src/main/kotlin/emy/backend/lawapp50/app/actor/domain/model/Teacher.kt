@@ -2,15 +2,16 @@ package emy.backend.lawapp50.app.actor.domain.model
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import emy.backend.lawapp50.app.actor.infrastructure.persistance.entity.TeacherEntity
+import jakarta.validation.constraints.NotNull
 
 data class Teacher(
     val teacherId : Long?,
-    val matricule : String? = null,
+//    val matricule : String? = null,
     val typeTeacherId : Long?,
     val departement : String?,
     val justificatif : String,
-    @JsonIgnore
-    val faculteId: Long,
+//    @JsonIgnore
+//    val faculteId: Long,
     @JsonIgnore
     var userId : Long?,
     var gender : Char? = null,
@@ -19,32 +20,37 @@ data class Teacher(
 data class TeacherRequest(
     val typeTeacherId : Long?,
     val departement : String?,
-    val matricule : String? = null,
+//    val matricule : String? = null,
     val justificatif : String,
-    val faculteId: Long,
+//    val faculteId: Long,
     var gender : Char? = null,
-    val etablissement : List<EtablissementRequest>
+    val etablissement : List<EtablissementRequest>? = emptyList(),
 )
 fun TeacherRequest.toDomain(userId: Long?) = Teacher(
     teacherId = null,
-    matricule = this.matricule,
+//    matricule = this.matricule,
     typeTeacherId = this.typeTeacherId,
     departement = this.departement,
     justificatif = this.justificatif,
-    faculteId = this.faculteId,
+//    faculteId = this.faculteId,
     userId = userId,
     gender = this.gender
 )
 data class EtablissementRequest(val etablisementId : Long)
 fun Teacher.toEntity() = TeacherEntity(
     teacherId = this.teacherId,
-    matricule = this.matricule,
+//    matricule = this.matricule,
     typeTeacherId = this.typeTeacherId,
     departement = this.departement,
     justificatif = this.justificatif,
-    faculteId = this.faculteId,
+//    faculteId = this.faculteId,
     gender = this.gender,
     userId = this.userId
   )
 
-
+data class ValidationAccountTeacher(
+    @NotNull
+    var teacherId : Long,
+    @NotNull
+    var state : Boolean,
+)
