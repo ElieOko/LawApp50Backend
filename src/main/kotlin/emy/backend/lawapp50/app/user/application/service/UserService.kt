@@ -78,7 +78,11 @@ class UserService(
     ): UserDto ?{
       val userState =  repository.findById(id)
       if (userState?.email == user.email) {
-          userState.city = user.city
+          userState.city = user.city.ifEmpty {userState.city}
+          userState.firstName = user.firstName.ifEmpty {userState.firstName}
+          userState.lastName = user.lastName.ifEmpty {userState.lastName}
+          userState.pseudo = user.pseudo.ifEmpty {userState.pseudo}
+          userState.phone = user.phone.ifEmpty { userState.phone }
           val updatedUser = repository.save(userState)
           return updatedUser.toDomain()
       }
@@ -88,7 +92,11 @@ class UserService(
               throw ResponseStatusException(HttpStatus.CONFLICT, "Cette adresse email est déjà utilisé.")
           }
           userState?.email = user.email
-          userState?.city = user.city
+          userState?.city = user.city.ifEmpty {userState.city}
+          userState?.firstName = user.firstName.ifEmpty {userState.firstName}
+          userState?.lastName = user.lastName.ifEmpty {userState.lastName}
+          userState?.pseudo = user.pseudo.ifEmpty {userState.pseudo}
+          userState?.phone = user.phone.ifEmpty { userState.phone }
           val updatedUser = repository.save(userState!!)
           return updatedUser.toDomain()
       }
