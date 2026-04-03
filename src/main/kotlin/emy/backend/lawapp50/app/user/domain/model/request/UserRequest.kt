@@ -6,9 +6,17 @@ data class UserRequestChange(
     @NotNull
     val email : String,
     @NotNull
-    val username : String,
+    val pseudo : String = "",
     @NotNull
-    val city  : String,
+    val phone : String = "",
+    @NotNull
+    val city : String = "",
+    @NotNull
+    @field:NotBlank(message = "Le nom est obligatoire")
+    var firstName : String,
+    @NotNull
+    @field:NotBlank(message = "Le prenom est obligatoire")
+    var lastName : String,
 )
 
 data class IdentifiantRequest(
