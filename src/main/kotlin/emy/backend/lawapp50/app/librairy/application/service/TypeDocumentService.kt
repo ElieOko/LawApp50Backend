@@ -1,7 +1,9 @@
 package emy.backend.lawapp50.app.librairy.application.service
 
+import emy.backend.lawapp50.app.librairy.infrastructure.persistance.entity.DocumentCategoryEntity
 import emy.backend.lawapp50.app.librairy.infrastructure.persistance.entity.TypeDocumentEntity
 import emy.backend.lawapp50.app.librairy.infrastructure.persistance.repository.TypeDocumentRepository
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.toList
 import org.springframework.stereotype.Service
@@ -19,5 +21,10 @@ class TypeDocumentService(
     }
     suspend fun getAll(): List<TypeDocumentEntity>{
         return rep.findAll().map{it}.toList()
+    }
+
+    suspend fun findIfExist(titre: String):TypeDocumentEntity?{
+        val type:TypeDocumentEntity ? = rep.findTypeDocExist(titre).firstOrNull()
+        return type
     }
 }
