@@ -30,6 +30,7 @@ class EvaluationController(
     private val questionOptionService: QuestionOptionService,
     private val questionCaseStudyService: QuestionCaseStudyService,
     private val questionService: QuestionService,
+    private val participationService: EvaluationParticipationService,
 ) {
     @Operation(summary = "Création de la session d'evaluation")
     @PostMapping("/{version}/${EvaluationScope.PRIVATE}", consumes = [MediaType.APPLICATION_JSON_VALUE])
@@ -59,10 +60,10 @@ class EvaluationController(
                     ResponseEntity.ok(mapOf("message" to "Votre évaluation a été créer avec succès"))
                 }
                 else{
-                    ResponseStatusException(HttpStatusCode.valueOf(403), "$RESSOURCE_NOT_ALLOW, vous n'êtes pas enseignant.")
+                    throw ResponseStatusException(HttpStatusCode.valueOf(403), "$RESSOURCE_NOT_ALLOW, vous n'êtes pas enseignant.")
                 }
             } else {
-                ResponseStatusException(HttpStatusCode.valueOf(403), RESSOURCE_NOT_ALLOW)
+                throw ResponseStatusException(HttpStatusCode.valueOf(403), RESSOURCE_NOT_ALLOW)
             }
         } finally {
             sentry.callToMetric(
@@ -96,5 +97,86 @@ class EvaluationController(
         }
     }
 
+    @Operation(summary = "Liste des évaluations ouvertes auxquelles vous pouvez répondre (hors les vôtres)")
+    @GetMapping("/{version}/${EvaluationScope.PROTECTED}/repondre", produces = [MediaType.APPLICATION_JSON_VALUE])
+    suspend fun listEvaluationsPourReponse(request: HttpServletRequest) = coroutineScope {
+        val startNanos = System.nanoTime()
+        try {
+            val session = auth.user()
+            val userId = session?.first?.userId
+                ?: throw ResponseStatusException(HttpStatusCode.valueOf(403), RESSOURCE_NOT_ALLOW)
+            mapOf("evaluations" to participationService.listAnswerableForUser(userId))
+        } finally {
+            sentry.callToMetric(
+                MetricModel(
+                    startNanos = startNanos,
+                    status = "200",
+                    route = "${request.method} /${request.requestURI}",
+                    countName = "api.evaluation.listPourReponse.count",
+                    distributionName = "api.evaluation.listPourReponse.latency"
+                )
+            )
+        }
+    }
+
+    @Operation(summary = "Feuille d'évaluation pour répondre (sans les bonnes réponses QCM)")
+    @GetMapping("/{version}/${EvaluationScope.PROTECTED}/{id}/passage", produces = [MediaType.APPLICATION_JSON_VALUE])
+    suspend fun getPassageEvaluation(request: HttpServletRequest, @PathVariable id: Long) = coroutineScope {
+        val startNanos = System.nanoTime()
+        try {
+            val session = auth.user()
+            val userId = session?.first?.userId
+                ?: throw ResponseStatusException(HttpStatusCode.valueOf(403), RESSOURCE_NOT_ALLOW)
+            mapOf("evaluation" to participationService.buildPassage(id, userId))
+        } finally {
+            sentry.callToMetric(
+                MetricModel(
+                    startNanos = startNanos,
+                    status = "200",
+                    route = "${request.method} /${request.requestURI}",
+                    countName = "api.evaluation.passage.count",
+                    distributionName = "api.evaluation.passage.latency"
+                )
+            )
+        }
+    }
+
+    @Operation(summary = "Soumettre les réponses à une évaluation (une seule fois, le créateur ne peut pas répondre)")
+    @PostMapping(
+        "/{version}/${EvaluationScope.PROTECTED}/{id}/reponses",
+        consumes = [MediaType.APPLICATION_JSON_VALUE],
+        produces = [MediaType.APPLICATION_JSON_VALUE],
+    )
+    suspend fun submitReponsesEvaluation(
+        request: HttpServletRequest,
+        @PathVariable id: Long,
+        @Valid @RequestBody body: EvaluationAnswerSubmitRequest,
+    ) = coroutineScope {
+        val startNanos = System.nanoTime()
+        try {
+            val session = auth.user()
+            val userId = session?.first?.userId
+                ?: throw ResponseStatusException(HttpStatusCode.valueOf(403), RESSOURCE_NOT_ALLOW)
+            val result = participationService.submitAnswers(id, userId, body)
+            ResponseEntity.status(201).body(
+                mapOf(
+                    "message" to result.message,
+                    "submissionId" to result.submissionId,
+                    "scoreQcm" to result.scoreQcm,
+                    "maxQcmPoints" to result.maxQcmPoints,
+                ),
+            )
+        } finally {
+            sentry.callToMetric(
+                MetricModel(
+                    startNanos = startNanos,
+                    status = "200",
+                    route = "${request.method} /${request.requestURI}",
+                    countName = "api.evaluation.submitReponses.count",
+                    distributionName = "api.evaluation.submitReponses.latency"
+                )
+            )
+        }
+    }
 
 }
