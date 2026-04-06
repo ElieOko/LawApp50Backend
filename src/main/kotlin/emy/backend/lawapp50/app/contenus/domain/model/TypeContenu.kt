@@ -9,7 +9,16 @@ data class TypeContenu(
     var isActive: Boolean = true,
 )
 data class TypeContenuRequest(
-    val id: Long? = null,
-    var name: String,
-    var isActive: Boolean = true,
+    val name: TypesContenu,
+    var isActive: Boolean = true
 )
+
+enum class TypesContenu {
+    TEXTE,
+    IMAGE,
+    VIDEO,
+    AUDIO,
+    LIEN,
+    STORY,
+    LIVE
+}
