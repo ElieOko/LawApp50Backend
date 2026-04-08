@@ -1,7 +1,8 @@
 package emy.backend.lawapp50.app.contenus.infrastructure.controller
 
 import emy.backend.lawapp50.app.contenus.application.service.ContenuService
-import emy.backend.lawapp50.app.contenus.application.service.ScopeContenuService
+import emy.backend.lawapp50.app.contenus.application.service.ScopeService
+import emy.backend.lawapp50.app.contenus.application.service.TypeContenuService
 import emy.backend.lawapp50.app.contenus.domain.model.ContenuRequest
 import emy.backend.lawapp50.app.contenus.infrastructure.persistance.entity.ContenuEntity
 import emy.backend.lawapp50.app.contenus.infrastructure.persistance.entity.ScopeContenuEntity
@@ -16,6 +17,7 @@ import jakarta.validation.Valid
 import kotlinx.coroutines.coroutineScope
 import org.springframework.context.annotation.Profile
 import org.springframework.http.MediaType
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import java.time.LocalDateTime
 
@@ -25,8 +27,10 @@ import java.time.LocalDateTime
 class ContenuController(
     private val s: ContenuService,
     private val userS: UserService,
+    private val conteS: TypeContenuService,
     private val sentry : SentryService,
-    private val scop : ScopeContenuRepository
+    private val scop : ScopeContenuRepository,
+    private val scopS : ScopeService
 ) {
     @Operation(summary = "Creation de contenu")
     @PostMapping("/{version}/${ContenuScope.PRIVATE}",produces = [MediaType.APPLICATION_JSON_VALUE])
@@ -36,6 +40,7 @@ class ContenuController(
         val startNanos = System.nanoTime()
         try {
             val user = userS.findIdUser(rData.userId) // ?: ResponseEntity.badRequest().body(mapOf("errer" to "User non trouvr"))
+            val typeContenu = conteS.findById(rData.typeContenuId) ?: return@coroutineScope ResponseEntity.badRequest().body(mapOf("errer" to "type contenu avec l'id ${rData.typeContenuId} non trouvé"))
             val data = ContenuEntity(
                 userId = user.userId!!,
                 title = rData.title,
@@ -47,16 +52,20 @@ class ContenuController(
             )
 
             val createContenu = s.create(data)
-
             val scope = rData.scope
-            val dataScopeContenu = scope?.map{
-                ScopeContenuEntity(
-                    scopeId = it?.id!!,
-                    contenuId = createContenu.id!!,
-                    isActive = true
-                )
-            }?.toList()
-            val saveScopeContenu = dataScopeContenu?.map{ scop.save(it) }
+            val dataScopeContenu = scope?.mapNotNull {
+                scopS.findById(it.id)?.id?.let { scopeId ->
+                    ScopeContenuEntity(
+                        scopeId = scopeId,
+                        contenuId = createContenu.id!!,
+                        isActive = true
+                    )
+                }
+            }
+            val saveScopeContenu = if (!dataScopeContenu.isNullOrEmpty()) {
+                dataScopeContenu.map { scop.save(it) }
+            } else null
+
             mapOf("contenu" to s.toDtoEntity( createContenu))
         } finally {
             sentry.callToMetric(

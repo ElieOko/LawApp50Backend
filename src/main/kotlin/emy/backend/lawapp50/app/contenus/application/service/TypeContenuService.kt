@@ -12,14 +12,13 @@ class TypeContenuService(private val r: TypeContenuRepository) {
     suspend fun create(c: TypeContenuEntity): TypeContenuEntity{
         return r.save(c)
     }
-
     suspend fun findById(id:Long): TypeContenuEntity?{
         return r.findById(id)
     }
-//    suspend fun getFavoriteIfExist(contenuId: Long, user: Long): _root_ide_package_.emy.backend.lawapp50.app.contenus.infrastructure.persistance.entity.TypeContenuEntity? {
-//        val like: _root_ide_package_.emy.backend.lawapp50.app.contenus.infrastructure.persistance.entity.TypeContenuEntity? = r.findFavoriteExist(contenuId, user)?.firstOrNull()
-//        return like
-//    }
+    suspend fun findIfExist(name: String):TypeContenuEntity?{
+        val type: TypeContenuEntity? = r.findTypeContenuExist(name).firstOrNull()
+        return type
+    }
     suspend fun getAll(): List<TypeContenuEntity>{
         return r.findAll().map{it}.toList()
     }

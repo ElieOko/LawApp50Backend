@@ -29,7 +29,7 @@ class ContenuRequest(
     val description: String,
     @NotNull
     val fileContent: String,
-    val scope: List<Scope?>?
+    val scope: List<Scope>?
 )
 
 class ContenuDto(
