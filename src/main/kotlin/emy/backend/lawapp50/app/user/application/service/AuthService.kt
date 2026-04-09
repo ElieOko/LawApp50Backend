@@ -79,10 +79,6 @@ class AuthService(
         )
         log.info("Creating user ${user.userId}")
         val savedEntity = userRepository.save(entity)
-//        if (accountItems?.isNotEmpty() == true){
-//            serviceMultiAccount.save(AccountUser(userId = savedEntity.userId!!, accountId =accountItems[0].typeAccount))
-//        }
-//        val newAccessToken = jwtService.generateAccessToken(savedEntity.userId!!.toHexString())
         val userData : UserDto = savedEntity.toDomain()
         return userData
     }
