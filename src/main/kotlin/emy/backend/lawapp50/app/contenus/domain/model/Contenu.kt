@@ -29,7 +29,11 @@ class ContenuRequest(
     val description: String,
     @NotNull
     val fileContent: String,
-    val scope: List<Scope>?
+    val scope: List<IdScopeRequest>?
+)
+
+data class IdScopeRequest(
+    val id: Long
 )
 
 class ContenuDto(

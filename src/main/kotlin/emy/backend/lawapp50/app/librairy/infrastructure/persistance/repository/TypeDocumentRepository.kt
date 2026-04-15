@@ -9,6 +9,6 @@ import org.springframework.data.repository.query.Param
 
 interface TypeDocumentRepository : CoroutineCrudRepository<TypeDocumentEntity, Long>
 {
-    @Query("SELECT * FROM document_categories WHERE titre  = :titre")
+    @Query("SELECT * FROM type_documents WHERE titre  = :titre")
     fun findTypeDocExist(@Param("titre") titre: String): Flow<TypeDocumentEntity>
 }

@@ -5,7 +5,7 @@ import org.springframework.data.relational.core.mapping.*
 import java.time.LocalDateTime
 
 @Table(name = "contenus")
-class ContenuEntity(
+class  ContenuEntity(
     @Id
     @Column("id")
     val id: Long? = null,
