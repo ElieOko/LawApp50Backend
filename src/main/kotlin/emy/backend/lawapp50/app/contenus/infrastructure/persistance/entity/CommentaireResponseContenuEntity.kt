@@ -16,7 +16,7 @@ class CommentaireResponseContenuEntity(
     @Column("description")
     var description : String,
     @Column("is_active")
-    var isActive: Boolean = false,
+    var isActive: Boolean = true,
     @Column("created_at")
     val createdAt: LocalDateTime = LocalDateTime.now(),
 )

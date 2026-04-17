@@ -16,16 +16,16 @@ import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.*
 
 @RestController
-@RequestMapping
+@RequestMapping("api/{version}/")
 @Profile("dev")
 class DocumentCategorieController(
     private val service: DocumentCategoryService,
     private val userS: UserService,
     private  val sentry: SentryService) {
     @Operation(summary = "Creation de document categorie")
-    @PostMapping("/{version}/${CATDocumentScope.PRIVATE}",produces = [MediaType.APPLICATION_JSON_VALUE])
+    @PostMapping(CATDocumentScope.PRIVATE,produces = [MediaType.APPLICATION_JSON_VALUE])
     suspend fun create(
-        @Valid @RequestBody rData: DocumentCategoryRequest, req: HttpServletRequest
+        @Valid @RequestBody rData: DocumentCategoryRequest, req: HttpServletRequest, @PathVariable version: String
     ) = coroutineScope {
         val startNanos = System.nanoTime()
         try {
@@ -49,8 +49,8 @@ class DocumentCategorieController(
         }
     }
 
-    @GetMapping("/{version}/${CATDocumentScope.PROTECTED}",produces = [MediaType.APPLICATION_JSON_VALUE])
-    suspend fun getAllFavoris(req: HttpServletRequest) = coroutineScope {
+    @GetMapping(CATDocumentScope.PROTECTED,produces = [MediaType.APPLICATION_JSON_VALUE])
+    suspend fun getAllFavoris(req: HttpServletRequest, @PathVariable version: String) = coroutineScope {
         val startNanos = System.nanoTime()
         try {
             mapOf("cateDoc" to service.getAll())
@@ -67,8 +67,8 @@ class DocumentCategorieController(
         }
     }
 
-    @GetMapping("/{version}/${CATDocumentScope.PRIVATE}/{id}",produces = [MediaType.APPLICATION_JSON_VALUE])
-    suspend fun getById(req: HttpServletRequest, @PathVariable id: Long) = coroutineScope {
+    @GetMapping("${CATDocumentScope.PRIVATE}/{id}",produces = [MediaType.APPLICATION_JSON_VALUE])
+    suspend fun getById(req: HttpServletRequest, @PathVariable id: Long, @PathVariable version: String) = coroutineScope {
         val startNanos = System.nanoTime()
         try {
             mapOf("cateDoc" to service.findById(id))

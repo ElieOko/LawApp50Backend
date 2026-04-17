@@ -17,16 +17,16 @@ import org.springframework.web.bind.annotation.*
 import java.time.LocalDateTime
 
 @RestController
-@RequestMapping
+@RequestMapping("api/{version}/")
 @Profile("dev")
 class AvisDocumentController(
     private val service: AvisDocumentService,
     private val userS: UserService,
     private  val sentry: SentryService) {
     @Operation(summary = "Creation de document avis")
-    @PostMapping("/{version}/${AVISDocumentScope.PRIVATE}",produces = [MediaType.APPLICATION_JSON_VALUE])
+    @PostMapping(AVISDocumentScope.PRIVATE,produces = [MediaType.APPLICATION_JSON_VALUE])
     suspend fun createAvisDoc(
-        @Valid @RequestBody rData: AvisDocumentRequest, req: HttpServletRequest
+        @Valid @RequestBody rData: AvisDocumentRequest, req: HttpServletRequest, @PathVariable version: String
     ) = coroutineScope {
         val startNanos = System.nanoTime()
         try {
@@ -54,8 +54,8 @@ class AvisDocumentController(
         }
     }
 
-    @GetMapping("/{version}/${AVISDocumentScope.PROTECTED}",produces = [MediaType.APPLICATION_JSON_VALUE])
-    suspend fun getAllAvisDoc(req: HttpServletRequest) = coroutineScope {
+    @GetMapping(AVISDocumentScope.PROTECTED,produces = [MediaType.APPLICATION_JSON_VALUE])
+    suspend fun getAllAvisDoc(req: HttpServletRequest, @PathVariable version: String) = coroutineScope {
         val startNanos = System.nanoTime()
         try {
             mapOf("Avisdocument" to service.getAll())
@@ -72,8 +72,8 @@ class AvisDocumentController(
         }
     }
 
-    @GetMapping("/{version}/${AVISDocumentScope.PRIVATE}/{id}",produces = [MediaType.APPLICATION_JSON_VALUE])
-    suspend fun getById(req: HttpServletRequest, @PathVariable id: Long) = coroutineScope {
+    @GetMapping("${AVISDocumentScope.PRIVATE}/{id}",produces = [MediaType.APPLICATION_JSON_VALUE])
+    suspend fun getById(req: HttpServletRequest, @PathVariable id: Long, @PathVariable version: String) = coroutineScope {
         val startNanos = System.nanoTime()
         try {
             mapOf("Avisdocument" to service.findById(id))

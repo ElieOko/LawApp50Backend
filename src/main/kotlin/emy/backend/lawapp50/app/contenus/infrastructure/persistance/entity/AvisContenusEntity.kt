@@ -17,5 +17,5 @@ class AvisContenusEntity(
     @Column("cote")
     val cote : Long = 0,
     @Column("is_active")
-    var isActive: Boolean = false,
+    var isActive: Boolean = true
 )

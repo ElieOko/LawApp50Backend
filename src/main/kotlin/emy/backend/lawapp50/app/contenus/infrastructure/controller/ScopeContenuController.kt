@@ -1,17 +1,13 @@
 package emy.backend.lawapp50.app.contenus.infrastructure.controller
 
-import emy.backend.lawapp50.app.contenus.application.service.ScopeContenuService
-import emy.backend.lawapp50.route.contenu.ScopeContenuScope
-import emy.backend.lawapp50.security.monitoring.MetricModel
-import emy.backend.lawapp50.security.monitoring.SentryService
-import jakarta.servlet.http.HttpServletRequest
-import kotlinx.coroutines.coroutineScope
-import org.springframework.context.annotation.Profile
-import org.springframework.http.MediaType
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import emy.backend.lawapp50.app.contenus.application.service.*
+import emy.backend.lawapp50.route.contenu.*
+import emy.backend.lawapp50.security.monitoring.*
+import jakarta.servlet.http.*
+import kotlinx.coroutines.*
+import org.springframework.context.annotation.*
+import org.springframework.http.*
+import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("api/{version}/")

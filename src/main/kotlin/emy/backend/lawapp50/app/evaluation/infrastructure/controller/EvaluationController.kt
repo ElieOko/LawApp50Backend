@@ -19,7 +19,7 @@ import org.springframework.web.server.ResponseStatusException
 
 @Tag(name = "Evaluation", description = "Gestion des evaluations")
 @RestController
-@RequestMapping
+@RequestMapping("api/{version}/")
 @Profile("dev")
 class EvaluationController(
     private val service: EvaluationService,
@@ -33,10 +33,11 @@ class EvaluationController(
     private val participationService: EvaluationParticipationService,
 ) {
     @Operation(summary = "Création de la session d'evaluation")
-    @PostMapping("/{version}/${EvaluationScope.PRIVATE}", consumes = [MediaType.APPLICATION_JSON_VALUE])
+    @PostMapping(EvaluationScope.PRIVATE, consumes = [MediaType.APPLICATION_JSON_VALUE])
     suspend fun createSessionEvaluation(
         request : HttpServletRequest,
-        @Valid @RequestBody data : EvaluationRequest) = coroutineScope {
+        @Valid @RequestBody data : EvaluationRequest, @PathVariable version: String
+    ) = coroutineScope {
         val startNanos = System.nanoTime()
         val session = auth.user()
         try {
@@ -79,8 +80,8 @@ class EvaluationController(
     }
 
     @Operation(summary = "Liste des evaluations")
-    @GetMapping("/{version}/${EvaluationScope.PUBLIC}",produces = [MediaType.APPLICATION_JSON_VALUE])
-    suspend fun getAllEvaluation(request: HttpServletRequest) = coroutineScope {
+    @GetMapping(EvaluationScope.PUBLIC,produces = [MediaType.APPLICATION_JSON_VALUE])
+    suspend fun getAllEvaluation(request: HttpServletRequest, @PathVariable version: String) = coroutineScope {
         val startNanos = System.nanoTime()
         try {
 
@@ -98,8 +99,8 @@ class EvaluationController(
     }
 
     @Operation(summary = "Liste des évaluations ouvertes auxquelles vous pouvez répondre (hors les vôtres)")
-    @GetMapping("/{version}/${EvaluationScope.PROTECTED}/repondre", produces = [MediaType.APPLICATION_JSON_VALUE])
-    suspend fun listEvaluationsPourReponse(request: HttpServletRequest) = coroutineScope {
+    @GetMapping("${EvaluationScope.PROTECTED}/repondre", produces = [MediaType.APPLICATION_JSON_VALUE])
+    suspend fun listEvaluationsPourReponse(request: HttpServletRequest, @PathVariable version: String) = coroutineScope {
         val startNanos = System.nanoTime()
         try {
             val session = auth.user()
@@ -120,8 +121,8 @@ class EvaluationController(
     }
 
     @Operation(summary = "Feuille d'évaluation pour répondre (sans les bonnes réponses QCM)")
-    @GetMapping("/{version}/${EvaluationScope.PROTECTED}/{id}/passage", produces = [MediaType.APPLICATION_JSON_VALUE])
-    suspend fun getPassageEvaluation(request: HttpServletRequest, @PathVariable id: Long) = coroutineScope {
+    @GetMapping("${EvaluationScope.PROTECTED}/{id}/passage", produces = [MediaType.APPLICATION_JSON_VALUE])
+    suspend fun getPassageEvaluation(request: HttpServletRequest, @PathVariable id: Long, @PathVariable version: String) = coroutineScope {
         val startNanos = System.nanoTime()
         try {
             val session = auth.user()
@@ -143,14 +144,14 @@ class EvaluationController(
 
     @Operation(summary = "Soumettre les réponses à une évaluation (une seule fois, le créateur ne peut pas répondre)")
     @PostMapping(
-        "/{version}/${EvaluationScope.PROTECTED}/{id}/reponses",
+        "${EvaluationScope.PROTECTED}/{id}/reponses",
         consumes = [MediaType.APPLICATION_JSON_VALUE],
         produces = [MediaType.APPLICATION_JSON_VALUE],
     )
     suspend fun submitReponsesEvaluation(
         request: HttpServletRequest,
         @PathVariable id: Long,
-        @Valid @RequestBody body: EvaluationAnswerSubmitRequest,
+        @Valid @RequestBody body: EvaluationAnswerSubmitRequest, @PathVariable version: String,
     ) = coroutineScope {
         val startNanos = System.nanoTime()
         try {

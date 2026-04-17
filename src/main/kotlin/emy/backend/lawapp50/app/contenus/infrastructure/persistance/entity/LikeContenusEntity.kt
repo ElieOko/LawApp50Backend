@@ -16,7 +16,7 @@ class LikeContenusEntity(
     @Column("user_id")
     var userId: Long,
     @Column("is_active")
-    var isActive: Boolean = false,
+    var isActive: Boolean = true,
     @Column("created_at")
     val createdAt: LocalDateTime = LocalDateTime.now(),
 )

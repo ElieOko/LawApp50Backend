@@ -36,8 +36,7 @@ class AvisContenusController(
                 contenuId = rData.contenuId,
                 cote = rData.cote,
                 userId = rData.userId,
-                description = rData.description,
-                isActive = true
+                description = rData.description
             )
 
             val createContenu = s.create(data)

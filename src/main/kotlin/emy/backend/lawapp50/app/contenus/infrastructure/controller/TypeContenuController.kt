@@ -1,17 +1,16 @@
 package emy.backend.lawapp50.app.contenus.infrastructure.controller
 
-import emy.backend.lawapp50.app.contenus.application.service.TypeContenuService
-import emy.backend.lawapp50.app.contenus.domain.model.TypeContenuRequest
-import emy.backend.lawapp50.app.contenus.infrastructure.persistance.entity.TypeContenuEntity
-import emy.backend.lawapp50.route.contenu.TypeContenuScope
-import emy.backend.lawapp50.security.monitoring.MetricModel
-import emy.backend.lawapp50.security.monitoring.SentryService
-import io.swagger.v3.oas.annotations.Operation
-import jakarta.servlet.http.HttpServletRequest
-import jakarta.validation.Valid
-import kotlinx.coroutines.coroutineScope
-import org.springframework.context.annotation.Profile
-import org.springframework.http.MediaType
+import emy.backend.lawapp50.app.contenus.application.service.*
+import emy.backend.lawapp50.app.contenus.domain.model.*
+import emy.backend.lawapp50.app.contenus.infrastructure.persistance.entity.*
+import emy.backend.lawapp50.route.contenu.*
+import emy.backend.lawapp50.security.monitoring.*
+import io.swagger.v3.oas.annotations.*
+import jakarta.servlet.http.*
+import jakarta.validation.*
+import kotlinx.coroutines.*
+import org.springframework.context.annotation.*
+import org.springframework.http.*
 import org.springframework.web.bind.annotation.*
 
 @RestController

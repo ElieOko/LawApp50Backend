@@ -35,7 +35,6 @@ class FavoriContenuController(
                 contenuId = rData.contenuId,
                 userId = rData.userId,
                 favorite = true,
-                isActive = true,
             )
             val existingFavorite = s.getFavoriteIfExist(rData.contenuId, user.userId!!)
             val createfavoris = if (existingFavorite != null) {

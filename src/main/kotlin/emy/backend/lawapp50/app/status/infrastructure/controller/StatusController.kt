@@ -1,28 +1,25 @@
 package emy.backend.lawapp50.app.status.infrastructure.controller
 
-import emy.backend.lawapp50.app.status.application.service.StatusPostService
-import emy.backend.lawapp50.app.status.domain.model.StatusPostRequest
-import emy.backend.lawapp50.app.status.infrastructure.persistance.entity.StatusEntity
-import emy.backend.lawapp50.route.status.StatusScope
-import emy.backend.lawapp50.security.Auth
-import emy.backend.lawapp50.security.monitoring.MetricModel
-import emy.backend.lawapp50.security.monitoring.SentryService
-import io.swagger.v3.oas.annotations.Operation
-import io.swagger.v3.oas.annotations.tags.Tag
-import jakarta.servlet.http.HttpServletRequest
-import jakarta.validation.Valid
-import kotlinx.coroutines.coroutineScope
-import org.springframework.context.annotation.Profile
-import org.springframework.http.HttpStatusCode
-import org.springframework.http.MediaType
-import org.springframework.http.ResponseEntity
+import emy.backend.lawapp50.app.status.application.service.*
+import emy.backend.lawapp50.app.status.domain.model.*
+import emy.backend.lawapp50.app.status.infrastructure.persistance.entity.*
+import emy.backend.lawapp50.route.status.*
+import emy.backend.lawapp50.security.*
+import emy.backend.lawapp50.security.monitoring.*
+import io.swagger.v3.oas.annotations.*
+import io.swagger.v3.oas.annotations.tags.*
+import jakarta.servlet.http.*
+import jakarta.validation.*
+import kotlinx.coroutines.*
+import org.springframework.context.annotation.*
+import org.springframework.http.*
 import org.springframework.web.bind.annotation.*
-import org.springframework.web.server.ResponseStatusException
-import java.time.LocalDateTime
+import org.springframework.web.server.*
+import java.time.*
 
 @Tag(name = "Status", description = "Publications de statut (notes / stories)")
 @RestController
-@RequestMapping
+@RequestMapping("api/{version}/")
 @Profile("dev")
 class StatusController(
     private val service: StatusPostService,
@@ -30,10 +27,10 @@ class StatusController(
     private val sentry: SentryService,
 ) {
     @Operation(summary = "Création d'un statut")
-    @PostMapping("/{version}/${StatusScope.PRIVATE}", produces = [MediaType.APPLICATION_JSON_VALUE])
+    @PostMapping(StatusScope.PRIVATE, produces = [MediaType.APPLICATION_JSON_VALUE])
     suspend fun createStatus(
         @Valid @RequestBody body: StatusPostRequest,
-        req: HttpServletRequest,
+        req: HttpServletRequest, @PathVariable version: String,
     ) = coroutineScope {
         val startNanos = System.nanoTime()
         try {
@@ -64,8 +61,8 @@ class StatusController(
     }
 
     @Operation(summary = "Liste des statuts actifs")
-    @GetMapping("/{version}/${StatusScope.PROTECTED}", produces = [MediaType.APPLICATION_JSON_VALUE])
-    suspend fun listActive(req: HttpServletRequest) = coroutineScope {
+    @GetMapping(StatusScope.PROTECTED, produces = [MediaType.APPLICATION_JSON_VALUE])
+    suspend fun listActive(req: HttpServletRequest, @PathVariable version: String) = coroutineScope {
         val startNanos = System.nanoTime()
         try {
             mapOf("status" to service.listActive())
@@ -83,8 +80,8 @@ class StatusController(
     }
 
     @Operation(summary = "Détail d'un statut par id")
-    @GetMapping("/{version}/${StatusScope.PRIVATE}/{id}", produces = [MediaType.APPLICATION_JSON_VALUE])
-    suspend fun getById(req: HttpServletRequest, @PathVariable id: Long) = coroutineScope {
+    @GetMapping("${StatusScope.PRIVATE}/{id}", produces = [MediaType.APPLICATION_JSON_VALUE])
+    suspend fun getById(req: HttpServletRequest, @PathVariable id: Long, @PathVariable version: String) = coroutineScope {
         val startNanos = System.nanoTime()
         try {
             mapOf("status" to service.findById(id))

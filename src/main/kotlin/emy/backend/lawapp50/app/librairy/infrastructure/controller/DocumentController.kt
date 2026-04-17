@@ -24,9 +24,9 @@ class DocumentController(
     private val userS: UserService,
     private  val sentry: SentryService) {
     @Operation(summary = "Creation de document")
-    @PostMapping("/{version}/${DocumentScope.PRIVATE}",produces = [MediaType.APPLICATION_JSON_VALUE])
+    @PostMapping(DocumentScope.PRIVATE,produces = [MediaType.APPLICATION_JSON_VALUE])
     suspend fun create(
-        @Valid @RequestBody rData: DocumentRequest, req: HttpServletRequest
+        @Valid @RequestBody rData: DocumentRequest, req: HttpServletRequest, @PathVariable version: String
     ) = coroutineScope {
         val startNanos = System.nanoTime()
         try {
@@ -60,8 +60,8 @@ class DocumentController(
         }
     }
 
-    @GetMapping("/{version}/${DocumentScope.PROTECTED}",produces = [MediaType.APPLICATION_JSON_VALUE])
-    suspend fun getAll(req: HttpServletRequest) = coroutineScope {
+    @GetMapping(DocumentScope.PROTECTED,produces = [MediaType.APPLICATION_JSON_VALUE])
+    suspend fun getAll(req: HttpServletRequest, @PathVariable version: String) = coroutineScope {
         val startNanos = System.nanoTime()
         try {
             mapOf("document" to service.getAll())
@@ -78,8 +78,8 @@ class DocumentController(
         }
     }
 
-    @GetMapping("/{version}/${DocumentScope.PRIVATE}/{id}",produces = [MediaType.APPLICATION_JSON_VALUE])
-    suspend fun getById(req: HttpServletRequest, @PathVariable id: Long) = coroutineScope {
+    @GetMapping("${DocumentScope.PRIVATE}/{id}",produces = [MediaType.APPLICATION_JSON_VALUE])
+    suspend fun getById(req: HttpServletRequest, @PathVariable id: Long, @PathVariable version: String) = coroutineScope {
         val startNanos = System.nanoTime()
         try {
             mapOf("document" to service.findById(id))

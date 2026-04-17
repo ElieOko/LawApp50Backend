@@ -31,7 +31,6 @@ class CommentaireContenuController(
         val startNanos = System.nanoTime()
         try {
             val data = CommentaireContenuEntity(
-                isActive = true,
                 contenuId = rData.contenuId,
                 userId = rData.userId,
                 description = rData.description,

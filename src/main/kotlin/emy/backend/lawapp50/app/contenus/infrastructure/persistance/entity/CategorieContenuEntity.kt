@@ -13,5 +13,5 @@ class CategorieContenuEntity(
     @Column("contenu_id")
     var contenuId: Long,
     @Column("is_active")
-    var isActive: Boolean = false,
+    var isActive: Boolean = true,
 )

@@ -28,12 +28,7 @@ class CategorieContenuController(
     ) = coroutineScope {
         val startNanos = System.nanoTime()
         try {
-            val data = CategorieContenuEntity(
-                categorieId = rData.categorieId,
-                contenuId = rData.contenuId,
-                isActive = true
-            )
-
+            val data = CategorieContenuEntity(categorieId = rData.categorieId, contenuId = rData.contenuId)
             val createContenu = s.create(data)
             mapOf("categorieContenu" to createContenu)
         } finally {

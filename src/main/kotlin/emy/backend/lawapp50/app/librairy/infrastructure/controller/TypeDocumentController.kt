@@ -21,16 +21,16 @@ import org.springframework.web.bind.annotation.*
 import java.time.LocalDateTime
 
 @RestController
-@RequestMapping
+@RequestMapping("api/{version}/")
 @Profile("dev")
 class TypeDocumentController(
     private val service: TypeDocumentService,
     private val userS: UserService,
     private  val sentry: SentryService) {
     @Operation(summary = "Creation de document type")
-    @PostMapping("/{version}/${TYPEDocumentScope.PRIVATE}",produces = [MediaType.APPLICATION_JSON_VALUE])
+    @PostMapping(TYPEDocumentScope.PRIVATE,produces = [MediaType.APPLICATION_JSON_VALUE])
     suspend fun create(
-        @Valid @RequestBody rData: TypeDocumentRequest, req: HttpServletRequest
+        @Valid @RequestBody rData: TypeDocumentRequest, req: HttpServletRequest, @PathVariable version: String
     ) = coroutineScope {
         val startNanos = System.nanoTime()
         try {
@@ -53,8 +53,8 @@ class TypeDocumentController(
         }
     }
 
-    @GetMapping("/{version}/${TYPEDocumentScope.PROTECTED}",produces = [MediaType.APPLICATION_JSON_VALUE])
-    suspend fun getAll(req: HttpServletRequest) = coroutineScope {
+    @GetMapping(TYPEDocumentScope.PROTECTED,produces = [MediaType.APPLICATION_JSON_VALUE])
+    suspend fun getAll(req: HttpServletRequest, @PathVariable version: String) = coroutineScope {
         val startNanos = System.nanoTime()
         try {
             mapOf("typeDoc" to service.getAll())
@@ -71,8 +71,8 @@ class TypeDocumentController(
         }
     }
 
-    @GetMapping("/{version}/${TYPEDocumentScope.PRIVATE}/{id}",produces = [MediaType.APPLICATION_JSON_VALUE])
-    suspend fun getById(req: HttpServletRequest, @PathVariable id: Long) = coroutineScope {
+    @GetMapping("${TYPEDocumentScope.PRIVATE}/{id}",produces = [MediaType.APPLICATION_JSON_VALUE])
+    suspend fun getById(req: HttpServletRequest, @PathVariable id: Long, @PathVariable version: String) = coroutineScope {
         val startNanos = System.nanoTime()
         try {
             mapOf("typeDoc" to service.findById(id))

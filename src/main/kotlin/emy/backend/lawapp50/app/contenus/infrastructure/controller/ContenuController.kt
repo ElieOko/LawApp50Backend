@@ -7,6 +7,8 @@ import emy.backend.lawapp50.app.contenus.infrastructure.persistance.repository.*
 import emy.backend.lawapp50.app.user.application.service.*
 import emy.backend.lawapp50.route.contenu.*
 import emy.backend.lawapp50.security.monitoring.*
+import emy.backend.lawapp50.utils.ApiResponseWithMessage
+import emy.backend.lawapp50.utils.Response.SUCCESS_CONTENUS_CREATE
 import io.swagger.v3.oas.annotations.*
 import jakarta.servlet.http.*
 import jakarta.validation.*
@@ -37,7 +39,7 @@ class ContenuController(
         val startNanos = System.nanoTime()
         try {
             val user = userS.findIdUser(rData.userId) // ?: ResponseEntity.badRequest().body(mapOf("errer" to "User non trouvr"))
-            val typeContenu = conteS.findById(rData.typeContenuId) ?: return@coroutineScope ResponseEntity.badRequest().body(mapOf("errer" to "type contenu avec l'id ${rData.typeContenuId} non trouvé"))
+            conteS.findById(rData.typeContenuId) ?: return@coroutineScope ResponseEntity.badRequest().body(mapOf("errer" to "type contenu avec l'id ${rData.typeContenuId} non trouvé"))
             val data = ContenuEntity(
                 userId = user.userId!!,
                 title = rData.title,
@@ -47,7 +49,6 @@ class ContenuController(
                 createdAt = LocalDateTime.now(),
                 typeContenuId = rData.typeContenuId
             )
-
             val createContenu = s.create(data)
             val scope = rData.scope
             val dataScopeContenu = scope?.mapNotNull {
@@ -59,11 +60,10 @@ class ContenuController(
                     )
                 }
             }
-            val saveScopeContenu = if (!dataScopeContenu.isNullOrEmpty()) {
-                dataScopeContenu.map { scop.save(it) }
-            } else null
-
-            mapOf("contenu" to s.toDtoEntity( createContenu))
+            if (!dataScopeContenu.isNullOrEmpty()) {
+                dataScopeContenu.forEach { scop.save(it) }
+            }
+            ApiResponseWithMessage(SUCCESS_CONTENUS_CREATE,createContenu)
         } finally {
             sentry.callToMetric(
                 MetricModel(

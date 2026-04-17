@@ -25,7 +25,6 @@ class CommentaireResponseContenuController(
     private val userS: UserService,
     private val sentry : SentryService
 ) {
-
     @Operation(summary = "Creation de categorie")
     @PostMapping(ResponseScope.PRIVATE,produces = [MediaType.APPLICATION_JSON_VALUE])
     suspend fun createResponseContenuCommentaire(
@@ -35,12 +34,10 @@ class CommentaireResponseContenuController(
         val startNanos = System.nanoTime()
         try {
             val data = CommentaireResponseContenuEntity(
-                isActive = true,
                 commentaireContenuId = rData.commentaireContenuId,
                 userId = rData.userId,
                 description = rData.description
             )
-
             val createComResponse = s.create(data)
             mapOf("responseCom" to createComResponse)
         } finally {
