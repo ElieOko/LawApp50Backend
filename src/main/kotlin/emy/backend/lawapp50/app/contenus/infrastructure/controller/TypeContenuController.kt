@@ -18,7 +18,7 @@ class TypeContenuController (
     private val s: TypeContenuService,
     private val sentry : SentryService) {
 
-    @Operation(summary = "Creation de type de contenu")
+    @Operation(summary = "Creation de type de contenu accept : TEXTE,IMAGE,VIDEO,AUDIO,LIEN,STORY,LIVE")
     @PostMapping("/{version}/${TypeContenuScope.PRIVATE}",produces = [MediaType.APPLICATION_JSON_VALUE])
     suspend fun create(
         @Valid @RequestBody rData: TypeContenuRequest, req: HttpServletRequest
