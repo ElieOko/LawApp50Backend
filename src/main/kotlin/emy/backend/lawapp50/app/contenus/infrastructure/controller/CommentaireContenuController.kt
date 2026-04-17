@@ -16,7 +16,7 @@ import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.*
 
 @RestController
-@RequestMapping
+@RequestMapping("api/{version}/")
 @Profile("dev")
 class CommentaireContenuController(
     private val s: CommentaireContenuService,
@@ -24,9 +24,9 @@ class CommentaireContenuController(
     private val sentry : SentryService
 ) {
     @Operation(summary = "Creation de categorie")
-    @PostMapping("/{version}/${CommentaireScope.PRIVATE}",produces = [MediaType.APPLICATION_JSON_VALUE])
+    @PostMapping(CommentaireScope.PRIVATE,produces = [MediaType.APPLICATION_JSON_VALUE])
     suspend fun createCommentaire(
-        @Valid @RequestBody rData: CommentaireContenuRequest, req: HttpServletRequest
+        @Valid @RequestBody rData: CommentaireContenuRequest, req: HttpServletRequest, @PathVariable version: String
     ) = coroutineScope {
         val startNanos = System.nanoTime()
         try {
@@ -53,8 +53,8 @@ class CommentaireContenuController(
     }
 
     @Operation(summary = "recuperation des commentaire contenu")
-    @GetMapping("/{version}/${CommentaireScope.PRIVATE}",produces = [MediaType.APPLICATION_JSON_VALUE])
-    suspend fun getAllCategorie(req: HttpServletRequest) = coroutineScope {
+    @GetMapping(CommentaireScope.PRIVATE,produces = [MediaType.APPLICATION_JSON_VALUE])
+    suspend fun getAllCategorie(req: HttpServletRequest, @PathVariable version: String) = coroutineScope {
         val startNanos = System.nanoTime()
         try {
             mapOf("commentaire" to s.getAll())
@@ -72,8 +72,8 @@ class CommentaireContenuController(
     }
 
     @Operation(summary = "recuperer une commentaire contenu par id")
-    @GetMapping("/{version}/${CommentaireScope.PROTECTED}/{id}",produces = [MediaType.APPLICATION_JSON_VALUE])
-    suspend fun getById(req: HttpServletRequest, @PathVariable id: Long) = coroutineScope {
+    @GetMapping("${CommentaireScope.PROTECTED}/{id}",produces = [MediaType.APPLICATION_JSON_VALUE])
+    suspend fun getById(req: HttpServletRequest, @PathVariable id: Long, @PathVariable version: String) = coroutineScope {
         val startNanos = System.nanoTime()
         try {
             mapOf("commentaire" to s.findById(id))

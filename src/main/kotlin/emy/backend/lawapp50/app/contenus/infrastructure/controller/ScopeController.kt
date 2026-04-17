@@ -14,13 +14,13 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-@RequestMapping
+@RequestMapping("api/{version}/")
 @Profile("dev")
 class ScopeController(
     private val s: ScopeService,
     private val sentry : SentryService) {
-    @GetMapping("/{version}/${ScopeScope.PROTECTED}", produces = [MediaType.APPLICATION_JSON_VALUE])
-    suspend fun getAllScope(req: HttpServletRequest) = coroutineScope {
+    @GetMapping(ScopeScope.PROTECTED, produces = [MediaType.APPLICATION_JSON_VALUE])
+    suspend fun getAllScope(req: HttpServletRequest, @PathVariable version: String) = coroutineScope {
         val startNanos = System.nanoTime()
         try {
             mapOf("scope" to s.getAll())
@@ -37,8 +37,8 @@ class ScopeController(
         }
     }
 
-    @GetMapping("/{version}/${ScopeScope.PRIVATE}/{id}", produces = [MediaType.APPLICATION_JSON_VALUE])
-    suspend fun getById(req: HttpServletRequest, @PathVariable id: Long) = coroutineScope {
+    @GetMapping("${ScopeScope.PRIVATE}/{id}", produces = [MediaType.APPLICATION_JSON_VALUE])
+    suspend fun getById(req: HttpServletRequest, @PathVariable id: Long, @PathVariable version: String) = coroutineScope {
         val startNanos = System.nanoTime()
         try {
             mapOf("scope" to s.findById(id))

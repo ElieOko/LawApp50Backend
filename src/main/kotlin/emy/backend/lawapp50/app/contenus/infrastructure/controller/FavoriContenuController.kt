@@ -16,7 +16,7 @@ import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.*
 
 @RestController
-@RequestMapping
+@RequestMapping("api/{version}/")
 @Profile("dev")
 class FavoriContenuController(
     private val s: FavoriContenuService,
@@ -24,9 +24,9 @@ class FavoriContenuController(
     private val userS: UserService,
 ) {
     @Operation(summary = "Creation de favoris")
-    @PostMapping("/{version}/${FavoriScope.PRIVATE}",produces = [MediaType.APPLICATION_JSON_VALUE])
+    @PostMapping(FavoriScope.PRIVATE,produces = [MediaType.APPLICATION_JSON_VALUE])
     suspend fun createFavoris(
-        @Valid @RequestBody rData: FavorisContenuRequest, req: HttpServletRequest
+        @Valid @RequestBody rData: FavorisContenuRequest, req: HttpServletRequest, @PathVariable version: String
     ) = coroutineScope {
         val startNanos = System.nanoTime()
         try {
@@ -58,8 +58,8 @@ class FavoriContenuController(
         }
     }
 
-    @GetMapping("/{version}/${FavoriScope.PROTECTED}",produces = [MediaType.APPLICATION_JSON_VALUE])
-    suspend fun getAllFavoris(req: HttpServletRequest) = coroutineScope {
+    @GetMapping(FavoriScope.PROTECTED,produces = [MediaType.APPLICATION_JSON_VALUE])
+    suspend fun getAllFavoris(req: HttpServletRequest, @PathVariable version: String) = coroutineScope {
         val startNanos = System.nanoTime()
         try {
             mapOf("favoris" to s.getAll())
@@ -76,8 +76,8 @@ class FavoriContenuController(
         }
     }
 
-    @GetMapping("/{version}/${FavoriScope.PRIVATE}/{id}",produces = [MediaType.APPLICATION_JSON_VALUE])
-    suspend fun getById(req: HttpServletRequest, @PathVariable id: Long) = coroutineScope {
+    @GetMapping("${FavoriScope.PRIVATE}/{id}",produces = [MediaType.APPLICATION_JSON_VALUE])
+    suspend fun getById(req: HttpServletRequest, @PathVariable id: Long, @PathVariable version: String) = coroutineScope {
         val startNanos = System.nanoTime()
         try {
             mapOf("favoris" to s.findById(id))

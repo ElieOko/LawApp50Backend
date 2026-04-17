@@ -1,22 +1,21 @@
 package emy.backend.lawapp50.app.contenus.infrastructure.controller
 
-import emy.backend.lawapp50.app.contenus.application.service.AvisContenusService
-import emy.backend.lawapp50.app.contenus.domain.model.AvisContenusRequest
-import emy.backend.lawapp50.app.contenus.infrastructure.persistance.entity.AvisContenusEntity
-import emy.backend.lawapp50.app.user.application.service.UserService
-import emy.backend.lawapp50.route.contenu.AvisContenuScope
-import emy.backend.lawapp50.security.monitoring.MetricModel
-import emy.backend.lawapp50.security.monitoring.SentryService
+import emy.backend.lawapp50.app.contenus.application.service.*
+import emy.backend.lawapp50.app.contenus.domain.model.*
+import emy.backend.lawapp50.app.contenus.infrastructure.persistance.entity.*
+import emy.backend.lawapp50.app.user.application.service.*
+import emy.backend.lawapp50.route.contenu.*
+import emy.backend.lawapp50.security.monitoring.*
 import io.swagger.v3.oas.annotations.Operation
-import jakarta.servlet.http.HttpServletRequest
-import jakarta.validation.Valid
+import jakarta.servlet.http.*
+import jakarta.validation.*
 import kotlinx.coroutines.coroutineScope
-import org.springframework.context.annotation.Profile
-import org.springframework.http.MediaType
+import org.springframework.context.annotation.*
+import org.springframework.http.*
 import org.springframework.web.bind.annotation.*
 
 @RestController
-@RequestMapping
+@RequestMapping("api/{version}/")
 @Profile("dev")
 class AvisContenusController(
     private val s: AvisContenusService,
@@ -24,9 +23,11 @@ class AvisContenusController(
     private val sentry : SentryService
 ) {
     @Operation(summary = "Creation de avis sur contenu")
-    @PostMapping("/{version}/${AvisContenuScope.PRIVATE}",produces = [MediaType.APPLICATION_JSON_VALUE])
+    @PostMapping(AvisContenuScope.PRIVATE,produces = [MediaType.APPLICATION_JSON_VALUE])
     suspend fun createAvisContenu(
-        @Valid @RequestBody rData: AvisContenusRequest, req: HttpServletRequest
+        @Valid @RequestBody rData: AvisContenusRequest,
+        req: HttpServletRequest,
+        @PathVariable version: String
     ) = coroutineScope {
         val startNanos = System.nanoTime()
         try {
@@ -55,8 +56,8 @@ class AvisContenusController(
     }
 
     @Operation(summary = "recuperation des avis sur contenu")
-    @GetMapping("/{version}/${AvisContenuScope.PROTECTED}",produces = [MediaType.APPLICATION_JSON_VALUE])
-    suspend fun getAllAvisContenu(req: HttpServletRequest) = coroutineScope {
+    @GetMapping(AvisContenuScope.PROTECTED,produces = [MediaType.APPLICATION_JSON_VALUE])
+    suspend fun getAllAvisContenu(req: HttpServletRequest, @PathVariable version: String) = coroutineScope {
         val startNanos = System.nanoTime()
         try {
             mapOf("avis" to s.getAll())
@@ -74,8 +75,8 @@ class AvisContenusController(
     }
 
     @Operation(summary = "recuperer un avis sur contenu par id")
-    @GetMapping("/{version}/${AvisContenuScope.PRIVATE}/{id}",produces = [MediaType.APPLICATION_JSON_VALUE])
-    suspend fun getById(req: HttpServletRequest, @PathVariable id: Long) = coroutineScope {
+    @GetMapping("${AvisContenuScope.PRIVATE}/{id}",produces = [MediaType.APPLICATION_JSON_VALUE])
+    suspend fun getById(req: HttpServletRequest, @PathVariable id: Long, @PathVariable version: String) = coroutineScope {
         val startNanos = System.nanoTime()
         try {
             mapOf("avis" to s.findById(id))

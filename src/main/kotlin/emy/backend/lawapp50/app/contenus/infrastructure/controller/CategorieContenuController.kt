@@ -15,16 +15,16 @@ import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.*
 
 @RestController
-@RequestMapping
+@RequestMapping("api/{version}/")
 @Profile("dev")
 class CategorieContenuController(
     private val s: CategorieContenuService,
     private val sentry : SentryService
 ) {
     @Operation(summary = "Creation de categorie contenu")
-    @PostMapping("/{version}/${CategorieContenuScope.PRIVATE}",produces = [MediaType.APPLICATION_JSON_VALUE])
+    @PostMapping(CategorieContenuScope.PRIVATE,produces = [MediaType.APPLICATION_JSON_VALUE])
     suspend fun createCategorieContenu(
-        @Valid @RequestBody rData: CategorieContenuRequest, req: HttpServletRequest
+        @Valid @RequestBody rData: CategorieContenuRequest, req: HttpServletRequest, @PathVariable version: String
     ) = coroutineScope {
         val startNanos = System.nanoTime()
         try {
@@ -50,8 +50,8 @@ class CategorieContenuController(
     }
 
     @Operation(summary = "recuperation des categories contenu")
-    @GetMapping("/{version}/${CategorieContenuScope.PROTECTED}",produces = [MediaType.APPLICATION_JSON_VALUE])
-    suspend fun getAllCategorieContenu(req: HttpServletRequest) = coroutineScope {
+    @GetMapping(CategorieContenuScope.PROTECTED,produces = [MediaType.APPLICATION_JSON_VALUE])
+    suspend fun getAllCategorieContenu(req: HttpServletRequest, @PathVariable version: String) = coroutineScope {
         val startNanos = System.nanoTime()
         try {
             mapOf("categorieContenu" to s.getAll())
@@ -69,8 +69,8 @@ class CategorieContenuController(
     }
 
     @Operation(summary = "recuperer une categorie contenu par id")
-    @GetMapping("/{version}/${CategorieContenuScope.PRIVATE}/{id}",produces = [MediaType.APPLICATION_JSON_VALUE])
-    suspend fun getById(req: HttpServletRequest, @PathVariable id: Long) = coroutineScope {
+    @GetMapping("${CategorieContenuScope.PRIVATE}/{id}",produces = [MediaType.APPLICATION_JSON_VALUE])
+    suspend fun getById(req: HttpServletRequest, @PathVariable id: Long, @PathVariable version: String) = coroutineScope {
         val startNanos = System.nanoTime()
         try {
             mapOf("categorieContenu" to s.findById(id))

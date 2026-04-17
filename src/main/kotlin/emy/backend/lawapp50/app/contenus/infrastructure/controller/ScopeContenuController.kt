@@ -14,13 +14,13 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-@RequestMapping
+@RequestMapping("api/{version}/")
 @Profile("dev")
 class ScopeContenuController(
     private val s: ScopeContenuService,
     private val sentry : SentryService) {
-    @GetMapping("/{version}/${ScopeContenuScope.PROTECTED}",produces = [MediaType.APPLICATION_JSON_VALUE])
-    suspend fun getAllScopeContenu(req: HttpServletRequest) = coroutineScope {
+    @GetMapping(ScopeContenuScope.PROTECTED,produces = [MediaType.APPLICATION_JSON_VALUE])
+    suspend fun getAllScopeContenu(req: HttpServletRequest, @PathVariable version: String) = coroutineScope {
         val startNanos = System.nanoTime()
         try {
             mapOf("scopeContenu" to s.getAll())
@@ -37,8 +37,8 @@ class ScopeContenuController(
         }
     }
 
-    @GetMapping("/{version}/${ScopeContenuScope.PRIVATE}/{id}",produces = [MediaType.APPLICATION_JSON_VALUE])
-    suspend fun getById(req: HttpServletRequest, @PathVariable id: Long) = coroutineScope {
+    @GetMapping("${ScopeContenuScope.PRIVATE}/{id}",produces = [MediaType.APPLICATION_JSON_VALUE])
+    suspend fun getById(req: HttpServletRequest, @PathVariable id: Long, @PathVariable version: String) = coroutineScope {
         val startNanos = System.nanoTime()
         try {
             mapOf("scopeContenu" to s.findById(id))

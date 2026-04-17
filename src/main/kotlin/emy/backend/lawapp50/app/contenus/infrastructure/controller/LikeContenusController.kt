@@ -16,7 +16,7 @@ import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.*
 
 @RestController
-@RequestMapping
+@RequestMapping("api/{version}/")
 @Profile("dev")
 class LikeContenusController (
     private val s: LikeContenusService,
@@ -24,9 +24,9 @@ class LikeContenusController (
     private val userS: UserService,
 ) {
     @Operation(summary = "Creation de like")
-    @PostMapping("/{version}/${LikeScope.PRIVATE}",produces = [MediaType.APPLICATION_JSON_VALUE])
+    @PostMapping(LikeScope.PRIVATE,produces = [MediaType.APPLICATION_JSON_VALUE])
     suspend fun createLike(
-        @Valid @RequestBody rData: FavorisContenuRequest, req: HttpServletRequest
+        @Valid @RequestBody rData: FavorisContenuRequest, req: HttpServletRequest, @PathVariable version: String
     ) = coroutineScope {
         val startNanos = System.nanoTime()
         try {
@@ -58,8 +58,8 @@ class LikeContenusController (
         }
     }
 
-    @GetMapping("/{version}/${LikeScope.PROTECTED}",produces = [MediaType.APPLICATION_JSON_VALUE])
-    suspend fun getAllFavoris(req: HttpServletRequest) = coroutineScope {
+    @GetMapping(LikeScope.PROTECTED,produces = [MediaType.APPLICATION_JSON_VALUE])
+    suspend fun getAllFavoris(req: HttpServletRequest, @PathVariable version: String) = coroutineScope {
         val startNanos = System.nanoTime()
         try {
             mapOf("likes" to s.getAll())
@@ -76,8 +76,8 @@ class LikeContenusController (
         }
     }
 
-    @GetMapping("/{version}/${LikeScope.PRIVATE}/{id}",produces = [MediaType.APPLICATION_JSON_VALUE])
-    suspend fun getById(req: HttpServletRequest, @PathVariable id: Long) = coroutineScope {
+    @GetMapping("${LikeScope.PRIVATE}/{id}",produces = [MediaType.APPLICATION_JSON_VALUE])
+    suspend fun getById(req: HttpServletRequest, @PathVariable id: Long, @PathVariable version: String) = coroutineScope {
         val startNanos = System.nanoTime()
         try {
             mapOf("likes" to s.findById(id))

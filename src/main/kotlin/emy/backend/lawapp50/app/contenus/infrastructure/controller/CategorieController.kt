@@ -15,16 +15,16 @@ import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.*
 
 @RestController
-@RequestMapping
+@RequestMapping("api/{version}/")
 @Profile("dev")
 class CategorieController (
     private val s: CategorieService,
     private val sentry : SentryService
 ) {
     @Operation(summary = "Creation de categorie")
-    @PostMapping("/{version}/${CategorieScope.PRIVATE}",produces = [MediaType.APPLICATION_JSON_VALUE])
+    @PostMapping(CategorieScope.PRIVATE,produces = [MediaType.APPLICATION_JSON_VALUE])
     suspend fun createCategorie(
-        @Valid @RequestBody rData: CategorieRequest, req: HttpServletRequest
+        @Valid @RequestBody rData: CategorieRequest, req: HttpServletRequest, @PathVariable version: String
     ) = coroutineScope {
         val startNanos = System.nanoTime()
         try {
@@ -49,8 +49,8 @@ class CategorieController (
     }
 
     @Operation(summary = "recuperation des categories contenu")
-    @GetMapping("/{version}/${CategorieScope.PROTECTED}",produces = [MediaType.APPLICATION_JSON_VALUE])
-    suspend fun getAllCategorie(req: HttpServletRequest) = coroutineScope {
+    @GetMapping(CategorieScope.PROTECTED,produces = [MediaType.APPLICATION_JSON_VALUE])
+    suspend fun getAllCategorie(req: HttpServletRequest, @PathVariable version: String) = coroutineScope {
         val startNanos = System.nanoTime()
         try {
             mapOf("categorie" to s.getAll())
@@ -68,8 +68,8 @@ class CategorieController (
     }
 
     @Operation(summary = "recuperer une categorie contenu par id")
-    @GetMapping("/{version}/${CategorieScope.PRIVATE}/{id}",produces = [MediaType.APPLICATION_JSON_VALUE])
-    suspend fun getById(req: HttpServletRequest, @PathVariable id: Long) = coroutineScope {
+    @GetMapping("${CategorieScope.PRIVATE}/{id}",produces = [MediaType.APPLICATION_JSON_VALUE])
+    suspend fun getById(req: HttpServletRequest, @PathVariable id: Long, @PathVariable version: String) = coroutineScope {
         val startNanos = System.nanoTime()
         try {
             mapOf("categorie" to s.findById(id))

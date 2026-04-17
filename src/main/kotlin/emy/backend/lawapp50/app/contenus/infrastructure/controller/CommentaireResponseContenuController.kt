@@ -12,10 +12,13 @@ import io.swagger.v3.oas.annotations.Operation
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.validation.Valid
 import kotlinx.coroutines.coroutineScope
+import org.springframework.context.annotation.Profile
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.*
 
 @RestController
+@RequestMapping("api/{version}/")
+@Profile("dev")
 class CommentaireResponseContenuController(
     private val s: CommentaireResponseContenuService,
     private val comCont: CommentaireContenuService,
@@ -24,9 +27,10 @@ class CommentaireResponseContenuController(
 ) {
 
     @Operation(summary = "Creation de categorie")
-    @PostMapping("/{version}/${ResponseScope.PRIVATE}",produces = [MediaType.APPLICATION_JSON_VALUE])
+    @PostMapping(ResponseScope.PRIVATE,produces = [MediaType.APPLICATION_JSON_VALUE])
     suspend fun createResponseContenuCommentaire(
-        @Valid @RequestBody rData: CommentaireResponseContenuRequest, req: HttpServletRequest
+        @Valid @RequestBody rData: CommentaireResponseContenuRequest, req: HttpServletRequest,
+        @PathVariable version: String
     ) = coroutineScope {
         val startNanos = System.nanoTime()
         try {
@@ -53,8 +57,8 @@ class CommentaireResponseContenuController(
     }
 
     @Operation(summary = "recuperation des response commentaires contenu")
-    @GetMapping("/{version}/${ResponseScope.PROTECTED}",produces = [MediaType.APPLICATION_JSON_VALUE])
-    suspend fun getAllResponseContenuCommentaire(req: HttpServletRequest) = coroutineScope {
+    @GetMapping(ResponseScope.PROTECTED,produces = [MediaType.APPLICATION_JSON_VALUE])
+    suspend fun getAllResponseContenuCommentaire(req: HttpServletRequest, @PathVariable version: String) = coroutineScope {
         val startNanos = System.nanoTime()
         try {
             mapOf("responseCom" to s.getAll())
@@ -72,8 +76,8 @@ class CommentaireResponseContenuController(
     }
 
     @Operation(summary = "recuperer une Response Contenu Commentaire par id")
-    @GetMapping("/{version}/${ResponseScope.PRIVATE}/{id}",produces = [MediaType.APPLICATION_JSON_VALUE])
-    suspend fun getById(req: HttpServletRequest, @PathVariable id: Long) = coroutineScope {
+    @GetMapping("${ResponseScope.PRIVATE}/{id}",produces = [MediaType.APPLICATION_JSON_VALUE])
+    suspend fun getById(req: HttpServletRequest, @PathVariable id: Long, @PathVariable version: String) = coroutineScope {
         val startNanos = System.nanoTime()
         try {
             mapOf("responseCom" to s.findById(id))

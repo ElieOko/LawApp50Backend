@@ -1,28 +1,23 @@
 package emy.backend.lawapp50.app.contenus.infrastructure.controller
 
-import emy.backend.lawapp50.app.contenus.application.service.ContenuService
-import emy.backend.lawapp50.app.contenus.application.service.ScopeService
-import emy.backend.lawapp50.app.contenus.application.service.TypeContenuService
-import emy.backend.lawapp50.app.contenus.domain.model.ContenuRequest
-import emy.backend.lawapp50.app.contenus.infrastructure.persistance.entity.ContenuEntity
-import emy.backend.lawapp50.app.contenus.infrastructure.persistance.entity.ScopeContenuEntity
-import emy.backend.lawapp50.app.contenus.infrastructure.persistance.repository.ScopeContenuRepository
-import emy.backend.lawapp50.app.user.application.service.UserService
-import emy.backend.lawapp50.route.contenu.ContenuScope
-import emy.backend.lawapp50.security.monitoring.MetricModel
-import emy.backend.lawapp50.security.monitoring.SentryService
-import io.swagger.v3.oas.annotations.Operation
-import jakarta.servlet.http.HttpServletRequest
-import jakarta.validation.Valid
-import kotlinx.coroutines.coroutineScope
-import org.springframework.context.annotation.Profile
-import org.springframework.http.MediaType
-import org.springframework.http.ResponseEntity
+import emy.backend.lawapp50.app.contenus.application.service.*
+import emy.backend.lawapp50.app.contenus.domain.model.*
+import emy.backend.lawapp50.app.contenus.infrastructure.persistance.entity.*
+import emy.backend.lawapp50.app.contenus.infrastructure.persistance.repository.*
+import emy.backend.lawapp50.app.user.application.service.*
+import emy.backend.lawapp50.route.contenu.*
+import emy.backend.lawapp50.security.monitoring.*
+import io.swagger.v3.oas.annotations.*
+import jakarta.servlet.http.*
+import jakarta.validation.*
+import kotlinx.coroutines.*
+import org.springframework.context.annotation.*
+import org.springframework.http.*
 import org.springframework.web.bind.annotation.*
-import java.time.LocalDateTime
+import java.time.*
 
 @RestController
-@RequestMapping
+@RequestMapping("api/{version}/")
 @Profile("dev")
 class ContenuController(
     private val s: ContenuService,
@@ -33,9 +28,11 @@ class ContenuController(
     private val scopS : ScopeService
 ) {
     @Operation(summary = "Creation de contenu")
-    @PostMapping("/{version}/${ContenuScope.PRIVATE}",produces = [MediaType.APPLICATION_JSON_VALUE])
+    @PostMapping(ContenuScope.PRIVATE,produces = [MediaType.APPLICATION_JSON_VALUE])
     suspend fun createContenu(
-        @Valid @RequestBody rData: ContenuRequest, req: HttpServletRequest
+        @Valid @RequestBody rData: ContenuRequest,
+        req: HttpServletRequest,
+        @PathVariable version: String
     ) = coroutineScope {
         val startNanos = System.nanoTime()
         try {
@@ -80,8 +77,8 @@ class ContenuController(
         }
     }
 
-    @GetMapping("/{version}/${ContenuScope.PROTECTED}",produces = [MediaType.APPLICATION_JSON_VALUE])
-    suspend fun getAllContenu(req: HttpServletRequest) = coroutineScope {
+    @GetMapping(ContenuScope.PROTECTED,produces = [MediaType.APPLICATION_JSON_VALUE])
+    suspend fun getAllContenu(req: HttpServletRequest, @PathVariable version: String) = coroutineScope {
         val startNanos = System.nanoTime()
         try {
             mapOf("contenu" to s.getAll())
@@ -98,8 +95,8 @@ class ContenuController(
         }
     }
 
-    @GetMapping("/{version}/${ContenuScope.PRIVATE}/{id}",produces = [MediaType.APPLICATION_JSON_VALUE])
-    suspend fun getById(req: HttpServletRequest, @PathVariable id: Long) = coroutineScope {
+    @GetMapping("${ContenuScope.PRIVATE}/{id}",produces = [MediaType.APPLICATION_JSON_VALUE])
+    suspend fun getById(req: HttpServletRequest, @PathVariable id: Long, @PathVariable version: String) = coroutineScope {
         val startNanos = System.nanoTime()
         try {
             mapOf("contenu" to s.findById(id))
