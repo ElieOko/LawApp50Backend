@@ -6,4 +6,5 @@ import org.springframework.data.repository.kotlin.CoroutineCrudRepository
 
 interface QuestionRepository : CoroutineCrudRepository<QuestionEntity, Long> {
     fun findAllByEvaluationIdAndIsActiveTrueOrderByIdAsc(evaluationId: Long): Flow<QuestionEntity>
+    fun findByEvaluationIdIn(evaluationIds: List<Long>): Flow<QuestionEntity>
 }
