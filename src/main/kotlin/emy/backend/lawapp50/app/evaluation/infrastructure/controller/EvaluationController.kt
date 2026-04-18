@@ -84,7 +84,26 @@ class EvaluationController(
     suspend fun getAllEvaluation(request: HttpServletRequest, @PathVariable version: String) = coroutineScope {
         val startNanos = System.nanoTime()
         try {
+            mapOf("message" to "Liste des évaluations", "session" to service.getAllData())
+        } finally {
+            sentry.callToMetric(
+                MetricModel(
+                    startNanos = startNanos,
+                    status = "200",
+                    route = "${request.method} /${request.requestURI}",
+                    countName = "api.evaluation.getAllEvaluation.count",
+                    distributionName = "api.evaluation.getAllEvaluation.latency"
+                )
+            )
+        }
+    }
 
+    @Operation(summary = "Liste by ID")
+    @GetMapping(EvaluationScope.PUBLIC+"/{id}",produces = [MediaType.APPLICATION_JSON_VALUE])
+    suspend fun getEvaluationByID(request: HttpServletRequest, @PathVariable version: String, @PathVariable id: Long,) = coroutineScope {
+        val startNanos = System.nanoTime()
+        try {
+            mapOf("message" to "Liste des évaluations", "session" to service.showDetail(id))
         } finally {
             sentry.callToMetric(
                 MetricModel(
